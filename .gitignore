@@ -1,0 +1,59 @@
+# MediTrack — .gitignore
+
+# ─── .NET ──────────────────────────────────────────────────────────────────
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vs/
+bin/
+obj/
+out/
+publish/
+*.nupkg
+*.snupkg
+**/TestResults/
+coverage.xml
+lcov.info
+
+# EF Core migrations generated files (keep the migration classes, exclude snapshots if desired)
+# Uncomment to exclude:
+# **/Migrations/
+
+# User secrets
+**/appsettings.Development.json
+**/secrets.json
+
+# ─── Angular / Node ────────────────────────────────────────────────────────
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+*.tgz
+
+# ─── Docker ────────────────────────────────────────────────────────────────
+.docker/
+docker-compose.override.yml   # per-developer overrides — don't commit
+
+# ─── Environment & Secrets ─────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pfx
+*.p12
+certs/
+
+# ─── IDE ───────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ─── Logs ──────────────────────────────────────────────────────────────────
+logs/
+*.log

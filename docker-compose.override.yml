@@ -1,0 +1,33 @@
+# docker-compose.override.yml — DEV OVERRIDES
+# Used automatically by `docker-compose up` alongside docker-compose.yml
+# Enables hot-reload ports and dev tooling without modifying production config
+
+version: '3.9'
+
+services:
+  sqlserver:
+    ports:
+      - "1433:1433"    # expose for local SSMS / Azure Data Studio
+
+  redis:
+    ports:
+      - "6379:6379"    # expose for local Redis Insight
+
+  claims-api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      - ./backend:/src   # mount source for dotnet watch (if using dev container)
+    ports:
+      - "5001:8080"
+
+  worker-service:
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      Worker__PollingIntervalSeconds: "10"   # faster polling in dev
+
+  frontend:
+    # In dev, run ng serve locally instead; this image is for integration testing
+    environment:
+      - NODE_ENV=development

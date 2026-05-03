@@ -1,0 +1,24 @@
+import { Routes } from '@angular/router';
+
+export const ADMIN_ROUTES: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+  },
+  {
+    path: 'audit-logs',
+    loadComponent: () =>
+      import('./audit-logs/audit-logs.component').then(m => m.AuditLogsComponent)
+  },
+  {
+    path: 'patients',
+    loadComponent: () =>
+      import('./directory/patients/patients.component').then(m => m.PatientsComponent)
+  },
+  {
+    path: 'providers',
+    loadComponent: () =>
+      import('./directory/providers/providers.component').then(m => m.ProvidersComponent)
+  }
+];

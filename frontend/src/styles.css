@@ -1,0 +1,69 @@
+/* MediTrack Global Styles */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  background: #f5f7fa;
+  color: #212121;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #bdbdbd; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9e9e9e; }
+
+/* Angular Material overrides */
+.mat-mdc-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,.06) !important;
+}
+
+.mat-mdc-raised-button.mat-primary {
+  height: 40px;
+  border-radius: 8px;
+}
+
+.mdc-list-item__primary-text {
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Global utility classes */
+.full-width { width: 100%; }
+
+.page-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Table improvements */
+.mat-mdc-table {
+  background: transparent !important;
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #616161 !important;
+}
+
+.mat-mdc-row:hover {
+  background: #f5f7fa;
+}
+
+/* Snackbar */
+.mat-mdc-snack-bar-container {
+  border-radius: 8px !important;
+}

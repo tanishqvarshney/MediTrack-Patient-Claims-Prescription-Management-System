@@ -8,6 +8,18 @@ TanCura is a **production-grade, intelligence-driven healthcare platform** desig
 
 ---
 
+## 🖼️ Visual Walkthrough
+
+### 1. Cinematic Intelligence Portal
+Experience a premium, secure entry point designed with high-fidelity glassmorphism and modern security standards.
+![TanCura Login](assets/walkthrough/login.png)
+
+### 2. High-Performance Dashboard
+A centralized intelligence hub featuring real-time data visualization, clinical metrics, and predictive claim analytics.
+![TanCura Dashboard](assets/walkthrough/dashboard.png)
+
+---
+
 ## ✨ Key Features
 
 *   **Intelligence Dashboard**: High-fidelity data visualization for claims processing, rejected cases, and provider metrics.

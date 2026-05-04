@@ -1,6 +1,6 @@
 # 🛡️ TanCura: Healthcare Intelligence Platform
 
-[![Build Status](https://github.com/tanishqvarshney/TanCura/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/tanishqvarshney/TanCura/actions)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=github)](https://tanishqvarshney.github.io/MediTrack-Patient-Claims-Prescription-Management-System/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![FAANG-Grade UI](https://img.shields.io/badge/UI-Premium-blueviolet.svg)](https://tancura.io)
 

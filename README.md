@@ -4,29 +4,29 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![FAANG-Grade UI](https://img.shields.io/badge/UI-Premium-blueviolet.svg)](https://tanishqvarshney.github.io/MediTrack-Patient-Claims-Prescription-Management-System/)
 
-**TanCura** is a premium, intelligence-driven healthcare platform designed for high-performance claims management and pharmaceutical benefit orchestration. Built with a modern, cloud-native architecture, it delivers a **FAANG-level user experience** through advanced glassmorphism, cinematic micro-animations, and a "Midnight Slate" design system.
+**TanCura** is a premium, production-grade Healthcare Intelligence platform. It orchestrates complex medical claims, clinical adjudications, and pharmaceutical benefits with **FAANG-grade precision**. Built for a cinematic experience, TanCura combines advanced glassmorphism design with a high-performance .NET 8 / Angular 17 architecture.
 
 ---
 
 ## 🖼️ Visual Walkthrough
 
 ### 1. Cinematic Intelligence Portal
-Experience a premium, secure entry point designed with high-fidelity frosted glassmorphism, animated medical HUD overlays, and modern security standards.
+A secure, high-fidelity entry point featuring **frosted glassmorphism**, animated medical HUD overlays, and precision tactile interactions.
 ![TanCura Login](assets/walkthrough/login.png)
 
-### 2. Intelligent Claims Hub
-A centralized dashboard featuring real-time data visualization, clinical metrics, and predictive claim analytics in a sophisticated, glass-accented interface.
+### 2. Strategic Intelligence Dashboard
+The core hub for medical orchestration. Features real-time KPI monitoring, claims velocity tracking, and glass-accented clinical data visualization.
 ![TanCura Dashboard](assets/walkthrough/dashboard.png)
 
 ---
 
-## ✨ Key Features
+## 🚀 Key Intelligence Modules
 
-*   **💎 Premium Glassmorphism UI**: High-fidelity "Frosted Glass" interface with backdrop blurring, soft glowing borders, and fluid animations.
-*   **📊 Intelligence Dashboard**: Real-time KPI visualization for claims processing, rejected cases, and provider metrics.
-*   **💊 Pharmaceutical Oracle**: Sophisticated drug benefit verification with clinical precision and NDC-level accuracy.
-*   **⚙️ Automated Adjudication**: Background-managed claim state transitions with a robust audit-ready engine.
-*   **🛡️ Audit Mastery**: Comprehensive PHI-compliant transaction logging for every clinical decision and access event.
+*   **💎 High-Fidelity Glassmorphism**: A state-of-the-art UI system using backdrop-blur tokens, glowing crystalline borders, and fluid micro-animations.
+*   **💊 Pharmaceutical Oracle**: Real-time pharmaceutical benefit verification engine with NDC-level clinical accuracy.
+*   **📋 Clinical Claims Hub**: Unified workspace for claim submission, detailed adjudication viewing, and intelligent filtering.
+*   **⚙️ Autonomous Adjudication**: A background-driven adjudication engine that manages claim lifecycles from "Pending" to "Paid" with zero manual intervention.
+*   **🛡️ Audit Mastery**: Secure, immutable transaction logging for every clinical decision, ensuring 100% compliance and visibility.
 
 ---
 
@@ -44,25 +44,32 @@ graph TD
 
 ---
 
-## 🚀 Quick Start (Docker Orchestration)
+## 💻 Tech Stack & Engineering
 
-Deploy the entire intelligence ecosystem in minutes:
+*   **Frontend**: Angular 17, RxJS, SCSS (Crystalline Design System), Material 17
+*   **Backend**: .NET 8 (Web API), Entity Framework Core 8, MediatR
+*   **Persistence**: MS SQL Server 2022, Redis (Distributed Caching)
+*   **Infrastructure**: Docker Orchestration, GitHub Actions (CI/CD)
+
+---
+
+## 🚦 Getting Started (Local Development)
+
+Launch the entire ecosystem in under 3 minutes:
 
 ```bash
 # 1. Initialize environment
 cp .env.example .env
 
-# 2. Launch the ecosystem
+# 2. Launch the ecosystem via Docker
 docker-compose up -d --build
 
 # 3. Access Points
-#    Frontend:    http://localhost:4200 (Intelligence Hub)
-#    API Gateway: http://localhost:5001/swagger (API Docs)
+#    Intelligence Hub: http://localhost:4200
+#    API Documentation: http://localhost:5001/swagger
 ```
 
----
-
-## 🔑 Default Credentials (Development)
+### 🔑 Test Credentials
 
 | Persona | Identity | Access Key |
 | :--- | :--- | :--- |
@@ -72,19 +79,10 @@ docker-compose up -d --build
 
 ---
 
-## 🔧 Technical Stack
-
-*   **Core**: .NET 8, C#, Entity Framework Core
-*   **Frontend**: Angular 17, Material Design, TypeScript, CSS Custom Properties (Glassmorphism)
-*   **Storage**: MS SQL Server 2022, Redis 7
-*   **Infrastructure**: Docker, Nginx, GitHub Actions (CI/CD)
-
----
-
 ## 📜 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-© 2026 **TanCura Healthcare Intelligence**. All rights reserved.
+© 2026 **TanCura Healthcare Intelligence**. Designed for the future of clinical orchestration.

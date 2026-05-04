@@ -17,71 +17,170 @@ import { AuthService } from '../../../core/auth/auth.service';
     MatInputModule, MatButtonModule, MatProgressSpinnerModule, MatIconModule
   ],
   template: `
-    <div class="login-container">
-      <mat-card class="login-card">
-        <mat-card-header>
-          <div class="logo">
-            <mat-icon>local_hospital</mat-icon>
-            <h1>TanCura</h1>
-          </div>
-          <p class="subtitle">Claims & Prescription Management</p>
-        </mat-card-header>
+    <div class="login-page">
+      <div class="mesh-gradient"></div>
+      
+      <div class="login-wrapper slide-up">
+        <mat-card class="login-card glass">
+          <mat-card-header>
+            <div class="brand">
+              <div class="logo-box">
+                <mat-icon>local_hospital</mat-icon>
+              </div>
+              <div class="brand-text">
+                <h1>TanCura</h1>
+                <p>Healthcare Intelligence Platform</p>
+              </div>
+            </div>
+          </mat-card-header>
 
-        <mat-card-content>
-          <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" placeholder="user@clinic.com">
-              <mat-icon matSuffix>email</mat-icon>
-              @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
-                <mat-error>Email is required</mat-error>
+          <mat-card-content>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email Address</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="name@example.com">
+                <mat-icon matSuffix class="field-icon">email</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password">
+                <button mat-icon-button matSuffix type="button" class="field-icon"
+                  (click)="showPassword.set(!showPassword())">
+                  <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </mat-form-field>
+
+              @if (error()) {
+                <div class="error-banner">
+                  <mat-icon>report_problem</mat-icon>
+                  <span>{{ error() }}</span>
+                </div>
               }
-            </mat-form-field>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Password</mat-label>
-              <input matInput [type]="showPassword() ? 'text' : 'password'" formControlName="password">
-              <button mat-icon-button matSuffix type="button"
-                (click)="showPassword.set(!showPassword())">
-                <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              <button mat-raised-button color="primary" type="submit"
+                class="full-width submit-btn" [disabled]="loading() || form.invalid">
+                @if (loading()) {
+                  <mat-spinner diameter="24"></mat-spinner>
+                } @else {
+                  Sign In to TanCura
+                }
               </button>
-            </mat-form-field>
-
-            @if (error()) {
-              <div class="error-banner">{{ error() }}</div>
-            }
-
-            <button mat-raised-button color="primary" type="submit"
-              class="full-width submit-btn" [disabled]="loading() || form.invalid">
-              @if (loading()) {
-                <mat-spinner diameter="20"></mat-spinner>
-              } @else {
-                Sign In
-              }
-            </button>
-          </form>
-        </mat-card-content>
-      </mat-card>
+            </form>
+          </mat-card-content>
+          
+          <mat-card-footer class="login-footer">
+            <p>© 2026 TanCura Global. All rights reserved.</p>
+          </mat-card-footer>
+        </mat-card>
+      </div>
     </div>
   `,
   styles: [`
-    .login-container {
+    .login-page {
+      position: relative;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      background: #0f172a;
+      overflow: hidden;
     }
-    .login-card { width: 420px; padding: 32px; border-radius: 16px; }
-    .logo { display: flex; align-items: center; gap: 12px; }
-    .logo mat-icon { font-size: 40px; color: #1976d2; }
-    h1 { margin: 0; font-size: 28px; font-weight: 700; }
-    .subtitle { color: #888; margin: 8px 0 24px; }
-    .full-width { width: 100%; }
-    .submit-btn { height: 48px; margin-top: 16px; font-size: 16px; }
+
+    .mesh-gradient {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(37, 99, 235, 0.1) 0px, transparent 50%);
+      filter: blur(80px);
+    }
+
+    .login-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 440px;
+      padding: 20px;
+    }
+
+    .login-card {
+      padding: 40px 32px;
+      border-radius: 24px !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .logo-box {
+      width: 52px; height: 52px;
+      background: var(--primary);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.4);
+    }
+
+    .logo-box mat-icon { color: #fff; font-size: 32px; width: 32px; height: 32px; }
+
+    .brand-text h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -1px;
+      color: var(--text-main);
+    }
+
+    .brand-text p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-icon { color: #94a3b8; }
+
+    .submit-btn {
+      height: 56px !important;
+      margin-top: 16px;
+      font-size: 16px !important;
+      border-radius: 14px !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
     .error-banner {
-      background: #ffebee; color: #c62828; padding: 12px;
-      border-radius: 8px; margin-bottom: 12px; font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fef2f2;
+      color: #991b1b;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid #fee2e2;
+    }
+
+    .login-footer {
+      margin-top: 32px;
+      text-align: center;
+      color: var(--text-light);
+      font-size: 12px;
     }
   `]
 })

@@ -1,14 +1,14 @@
 -- =============================================================
--- MediTrack Database Initialization Script
+-- TanCura Database Initialization Script
 -- Run once against an empty SQL Server database
 -- =============================================================
 
 USE master;
 GO
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'MediTrack')
-    CREATE DATABASE MediTrack;
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'TanCura')
+    CREATE DATABASE TanCura;
 GO
-USE MediTrack;
+USE TanCura;
 GO
 
 -- ─── Seed Insurance Plans ─────────────────────────────────────
@@ -29,11 +29,11 @@ VALUES
     (NEWID(), '00093-5071-98', 'Lisinopril 10mg', 1, 5.00, 0, 365, 1);
 
 -- ─── Seed Test Users ──────────────────────────────────────────
--- Passwords are BCrypt hashes of "Password123!"
+-- Passwords are BCrypt hashes of "TanCura123!"
 INSERT INTO Users (UserId, Email, PasswordHash, Role, IsActive)
 VALUES
     ('B0000001-0000-0000-0000-000000000001',
-     'admin@meditrack.io',
+     'admin@tancura.io',
      '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.s5uG.',
      'Admin', 1),
     ('B0000001-0000-0000-0000-000000000002',
@@ -65,4 +65,4 @@ CREATE UNIQUE CLUSTERED INDEX IX_ClaimMetrics_DateStatus
     ON vw_ClaimMetricsSummary (ClaimDate, Status);
 GO
 
-PRINT 'MediTrack seed data applied successfully.';
+PRINT 'TanCura seed data applied successfully.';

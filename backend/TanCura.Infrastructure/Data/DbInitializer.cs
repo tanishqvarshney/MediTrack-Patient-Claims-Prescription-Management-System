@@ -81,7 +81,9 @@ public static class DbInitializer
             new Patient { FirstName = "Gregory", LastName = "Nelson", DateOfBirth = new DateTime(1974, 6, 30), MemberId = "MBR114477", Email = "g.nelson@outlook.com", InsurancePlanId = goldPlan.PlanId },
             new Patient { FirstName = "Laura", LastName = "King", DateOfBirth = new DateTime(1996, 1, 15), MemberId = "MBR336699", Email = "l.king@gmail.com", InsurancePlanId = silverPlan.PlanId },
             new Patient { FirstName = "Jeffrey", LastName = "Baker", DateOfBirth = new DateTime(1981, 11, 20), MemberId = "MBR558822", Email = "j.baker@tancura.io", InsurancePlanId = goldPlan.PlanId },
-            new Patient { FirstName = "Angela", LastName = "Hill", DateOfBirth = new DateTime(1989, 4, 3), MemberId = "MBR779944", Email = "a.hill@gmail.com", InsurancePlanId = silverPlan.PlanId }
+            new Patient { FirstName = "Angela", LastName = "Hill", DateOfBirth = new DateTime(1989, 4, 3), MemberId = "MBR779944", Email = "a.hill@gmail.com", InsurancePlanId = silverPlan.PlanId },
+            new Patient { FirstName = "Thomas", LastName = "Clark", DateOfBirth = new DateTime(1977, 9, 12), MemberId = "MBR113355", Email = "t.clark@yahoo.com", InsurancePlanId = goldPlan.PlanId },
+            new Patient { FirstName = "Jessica", LastName = "Lewis", DateOfBirth = new DateTime(1994, 2, 28), MemberId = "MBR662288", Email = "j.lewis@gmail.com", InsurancePlanId = silverPlan.PlanId }
         };
 
         foreach (var p in patientsToAdd)
@@ -95,7 +97,7 @@ public static class DbInitializer
         await context.SaveChangesAsync();
 
         // 4. Seed Users (Refresh to ensure LinkedEntityId is correct)
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword("Password123!");
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword("TanCura123!");
         var providersList = await context.Providers.ToListAsync();
         var patientsList = await context.Patients.ToListAsync();
         
@@ -159,77 +161,119 @@ public static class DbInitializer
 
         var p0 = patientsList[0];
         var p1 = patientsList[1];
+        var p2 = patientsList[2];
+        var p3 = patientsList[3];
         var prov0 = providersList[0];
         var prov1 = providersList[1];
+        var prov2 = providersList[2];
 
         context.Claims.AddRange(
-            // Claims for provider@clinic.com (prov0)
+            // --- PAID CLAIMS ---
             new Claim
             {
                 ClaimId = Guid.NewGuid(),
-                ClaimNumber = "CLM-PROV0-001",
+                ClaimNumber = "CLM-2024-001",
                 PatientId = p0.PatientId,
                 ProviderId = prov0.ProviderId,
-                ServiceDate = DateTime.UtcNow.AddDays(-10),
-                SubmittedDate = DateTime.UtcNow.AddDays(-9),
+                ServiceDate = DateTime.UtcNow.AddDays(-30),
+                SubmittedDate = DateTime.UtcNow.AddDays(-29),
                 TotalAmount = 450.00m,
                 Status = ClaimStatus.Paid,
-                ProcessedDate = DateTime.UtcNow.AddDays(-5),
+                ProcessedDate = DateTime.UtcNow.AddDays(-25),
                 LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "99214", Quantity = 1, UnitCost = 450.00m } }
             },
             new Claim
             {
                 ClaimId = Guid.NewGuid(),
-                ClaimNumber = "CLM-PROV0-002",
+                ClaimNumber = "CLM-2024-002",
                 PatientId = p1.PatientId,
+                ProviderId = prov1.ProviderId,
+                ServiceDate = DateTime.UtcNow.AddDays(-28),
+                SubmittedDate = DateTime.UtcNow.AddDays(-27),
+                TotalAmount = 1250.00m,
+                Status = ClaimStatus.Paid,
+                ProcessedDate = DateTime.UtcNow.AddDays(-20),
+                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "27447", Quantity = 1, UnitCost = 1250.00m } }
+            },
+
+            // --- REJECTED CLAIMS ---
+            new Claim
+            {
+                ClaimId = Guid.NewGuid(),
+                ClaimNumber = "CLM-2024-ERR-01",
+                PatientId = p2.PatientId,
                 ProviderId = prov0.ProviderId,
+                ServiceDate = DateTime.UtcNow.AddDays(-15),
+                SubmittedDate = DateTime.UtcNow.AddDays(-14),
+                TotalAmount = 800.00m,
+                Status = ClaimStatus.Rejected,
+                RejectionReason = "Member eligibility expired",
+                ProcessedDate = DateTime.UtcNow.AddDays(-12),
+                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "70450", Quantity = 1, UnitCost = 800.00m } }
+            },
+
+            // --- PROCESSING CLAIMS ---
+            new Claim
+            {
+                ClaimId = Guid.NewGuid(),
+                ClaimNumber = "CLM-2024-PRC-01",
+                PatientId = p3.PatientId,
+                ProviderId = prov2.ProviderId,
                 ServiceDate = DateTime.UtcNow.AddDays(-5),
                 SubmittedDate = DateTime.UtcNow.AddDays(-4),
-                TotalAmount = 1200.00m,
-                Status = ClaimStatus.Rejected,
-                RejectionReason = "Prior authorization required",
-                ProcessedDate = DateTime.UtcNow.AddDays(-2),
-                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "70450", Quantity = 1, UnitCost = 1200.00m } }
+                TotalAmount = 150.00m,
+                Status = ClaimStatus.Processing,
+                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "99213", Quantity = 1, UnitCost = 150.00m } }
             },
             new Claim
             {
                 ClaimId = Guid.NewGuid(),
-                ClaimNumber = "CLM-PROV0-003",
+                ClaimNumber = "CLM-2024-PRC-02",
                 PatientId = p0.PatientId,
+                ProviderId = prov1.ProviderId,
+                ServiceDate = DateTime.UtcNow.AddDays(-4),
+                SubmittedDate = DateTime.UtcNow.AddDays(-3),
+                TotalAmount = 300.00m,
+                Status = ClaimStatus.Processing,
+                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "99214", Quantity = 1, UnitCost = 300.00m } }
+            },
+
+            // --- PENDING CLAIMS ---
+            new Claim
+            {
+                ClaimId = Guid.NewGuid(),
+                ClaimNumber = "CLM-2024-PND-01",
+                PatientId = p1.PatientId,
                 ProviderId = prov0.ProviderId,
                 ServiceDate = DateTime.UtcNow.AddDays(-2),
                 SubmittedDate = DateTime.UtcNow.AddDays(-1),
-                TotalAmount = 150.00m,
+                TotalAmount = 220.00m,
                 Status = ClaimStatus.Pending,
-                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "99213", Quantity = 1, UnitCost = 150.00m } }
-            },
-
-            // Claims for patient@example.com (p0) from other providers
-            new Claim
-            {
-                ClaimId = Guid.NewGuid(),
-                ClaimNumber = "CLM-PAT-001",
-                PatientId = p0.PatientId,
-                ProviderId = prov1.ProviderId,
-                ServiceDate = DateTime.UtcNow.AddDays(-15),
-                SubmittedDate = DateTime.UtcNow.AddDays(-14),
-                TotalAmount = 3500.00m,
-                Status = ClaimStatus.Paid,
-                ProcessedDate = DateTime.UtcNow.AddDays(-10),
-                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "27447", Quantity = 1, UnitCost = 3500.00m } }
+                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "99213", Quantity = 1, UnitCost = 220.00m } }
             },
             new Claim
             {
                 ClaimId = Guid.NewGuid(),
-                ClaimNumber = "CLM-PAT-002",
-                PatientId = p0.PatientId,
+                ClaimNumber = "CLM-2024-PND-02",
+                PatientId = p2.PatientId,
+                ProviderId = prov2.ProviderId,
+                ServiceDate = DateTime.UtcNow.AddDays(-1),
+                SubmittedDate = DateTime.UtcNow,
+                TotalAmount = 55.00m,
+                Status = ClaimStatus.Pending,
+                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "36415", Quantity = 1, UnitCost = 55.00m } }
+            },
+            new Claim
+            {
+                ClaimId = Guid.NewGuid(),
+                ClaimNumber = "CLM-2024-PND-03",
+                PatientId = p3.PatientId,
                 ProviderId = prov1.ProviderId,
                 ServiceDate = DateTime.UtcNow.AddDays(-3),
                 SubmittedDate = DateTime.UtcNow.AddDays(-2),
-                TotalAmount = 85.00m,
-                Status = ClaimStatus.Approved,
-                ProcessedDate = DateTime.UtcNow.AddDays(-1),
-                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "36415", Quantity = 1, UnitCost = 85.00m } }
+                TotalAmount = 1200.00m,
+                Status = ClaimStatus.Pending,
+                LineItems = new List<ClaimLineItem> { new ClaimLineItem { ProcedureCode = "72141", Quantity = 1, UnitCost = 1200.00m } }
             }
         );
         await context.SaveChangesAsync();

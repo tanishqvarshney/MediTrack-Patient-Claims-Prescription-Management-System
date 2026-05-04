@@ -31,19 +31,22 @@ interface NavItem {
         <mat-sidenav mode="side" opened class="sidenav" [class.collapsed]="collapsed()">
           <!-- Logo -->
           <div class="sidenav-logo">
-            <mat-icon class="logo-icon">local_hospital</mat-icon>
+            <div class="logo-circle">
+              <mat-icon class="logo-icon">local_hospital</mat-icon>
+            </div>
             @if (!collapsed()) {
               <span class="logo-text">TanCura</span>
             }
           </div>
 
-          <mat-nav-list>
+          <mat-nav-list class="nav-list">
             @for (item of visibleNavItems(); track item.route) {
               <a mat-list-item [routerLink]="item.route" routerLinkActive="active-nav"
+                class="nav-item"
                 [matTooltip]="collapsed() ? item.label : ''" matTooltipPosition="right">
                 <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
                 @if (!collapsed()) {
-                  <span matListItemTitle>{{ item.label }}</span>
+                  <span matListItemTitle class="nav-label">{{ item.label }}</span>
                 }
               </a>
             }
@@ -51,9 +54,9 @@ interface NavItem {
 
           <!-- Collapse toggle -->
           <div class="sidenav-footer">
-            <button mat-icon-button (click)="collapsed.set(!collapsed())"
-              [matTooltip]="collapsed() ? 'Expand' : 'Collapse'" matTooltipPosition="right">
-              <mat-icon>{{ collapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+            <button mat-icon-button (click)="collapsed.set(!collapsed())" class="toggle-btn"
+              [matTooltip]="collapsed() ? 'Expand Menu' : 'Collapse Menu'" matTooltipPosition="right">
+              <mat-icon>{{ collapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>
             </button>
           </div>
         </mat-sidenav>
@@ -61,24 +64,48 @@ interface NavItem {
         <!-- Main Content -->
         <mat-sidenav-content class="main-content">
           <!-- Top Toolbar -->
-          <mat-toolbar class="top-bar">
+          <mat-toolbar class="top-bar glass">
+            <div class="breadcrumb">
+              <span class="root-path">Dashboard</span>
+              <mat-icon class="sep">chevron_right</mat-icon>
+              <span class="current-path">Overview</span>
+            </div>
+            
             <span class="spacer"></span>
-            <button mat-button [matMenuTriggerFor]="userMenu" class="user-btn">
-              <mat-icon>account_circle</mat-icon>
-              @if (auth.currentUser(); as u) {
-                <span>{{ u.email }}</span>
-                <span class="role-chip">{{ u.role }}</span>
-              }
-            </button>
-            <mat-menu #userMenu="matMenu">
+
+            <div class="actions">
+              <button mat-icon-button class="action-btn" matTooltip="Notifications" (click)="toggleNotifications()">
+                <mat-icon>notifications</mat-icon>
+                <span class="badge">3</span>
+              </button>
+              
+              <button mat-button [matMenuTriggerFor]="userMenu" class="user-profile">
+                @if (auth.currentUser(); as u) {
+                  <div class="user-info">
+                    <span class="user-email">{{ u.email }}</span>
+                    <span class="user-role">{{ u.role }}</span>
+                  </div>
+                  <div class="avatar">
+                    {{ u.email[0].toUpperCase() }}
+                  </div>
+                }
+              </button>
+            </div>
+
+            <mat-menu #userMenu="matMenu" class="premium-menu">
+              <div class="menu-header" mat-menu-item disabled>
+                <mat-icon>account_circle</mat-icon>
+                <span>My Account</span>
+              </div>
+              <mat-divider></mat-divider>
               <button mat-menu-item (click)="auth.logout()">
-                <mat-icon>logout</mat-icon> Sign Out
+                <mat-icon>logout</mat-icon> <span>Sign Out</span>
               </button>
             </mat-menu>
           </mat-toolbar>
 
           <!-- Router outlet -->
-          <div class="content-area">
+          <div class="content-area slide-up">
             <router-outlet></router-outlet>
           </div>
         </mat-sidenav-content>
@@ -93,40 +120,104 @@ interface NavItem {
 
     /* Sidenav */
     .sidenav {
-      width: 240px; background: #0d1b2a; color: #fff;
+      width: 260px; background: #0f172a; color: #fff;
       display: flex; flex-direction: column;
-      transition: width 0.3s ease;
+      border-right: none;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .sidenav.collapsed { width: 64px; }
+    .sidenav.collapsed { width: 80px; }
+    
     .sidenav-logo {
-      display: flex; align-items: center; gap: 12px;
-      padding: 20px 16px; border-bottom: 1px solid rgba(255,255,255,.1);
+      display: flex; align-items: center; gap: 14px;
+      padding: 32px 20px;
     }
-    .logo-icon { color: #42a5f5; font-size: 28px; }
-    .logo-text { font-size: 18px; font-weight: 700; color: #fff; }
-    mat-nav-list { flex: 1; padding-top: 8px; }
-    mat-nav-list a {
-      color: rgba(255,255,255,.7) !important;
-      border-radius: 8px; margin: 2px 8px;
-      transition: background 0.2s;
+    .logo-circle {
+      width: 40px; height: 40px; background: var(--primary);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
-    mat-nav-list a:hover { background: rgba(255,255,255,.08) !important; color: #fff !important; }
-    mat-nav-list a.active-nav { background: rgba(66,165,245,.2) !important; color: #42a5f5 !important; }
-    mat-nav-list a.active-nav mat-icon { color: #42a5f5 !important; }
-    .sidenav-footer { padding: 12px 8px; border-top: 1px solid rgba(255,255,255,.1); }
+    .logo-icon { color: #fff; font-size: 24px; }
+    .logo-text { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; color: #fff; }
+
+    .nav-list { padding: 0 12px; flex: 1; }
+    .nav-item {
+      height: 52px !important; border-radius: 12px !important;
+      margin-bottom: 6px !important; 
+      color: #ffffff !important;
+      opacity: 1 !important;
+      transition: var(--transition);
+      display: flex !important; align-items: center !important;
+    }
+    .nav-item * { color: #ffffff !important; } /* Force all children to white */
+    
+    .nav-item mat-icon { 
+      color: #ffffff !important; 
+      transition: var(--transition); 
+      opacity: 0.9 !important; 
+    }
+    .nav-label { color: #ffffff !important; opacity: 1 !important; }
+
+    .nav-item:hover { 
+      background: rgba(255,255,255, 0.15) !important; 
+    }
+    .nav-item:hover * { opacity: 1 !important; }
+    
+    .nav-item.active-nav { 
+      background: var(--primary) !important; 
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    }
+    .nav-item.active-nav * { opacity: 1 !important; font-weight: 700 !important; }
+
+    .sidenav-footer { padding: 20px; border-top: 1px solid rgba(255,255,255, 0.05); }
+    .toggle-btn { color: #94a3b8; }
+    .toggle-btn:hover { color: #fff; background: rgba(255,255,255, 0.05); }
 
     /* Top bar */
-    .top-bar { background: #fff; border-bottom: 1px solid #e0e0e0; z-index: 10; }
+    .top-bar {
+      height: 72px; padding: 0 24px;
+      display: flex; align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      background: rgba(255,255,255, 0.8) !important;
+      backdrop-filter: blur(12px);
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; color: #64748b; }
+    .root-path { font-weight: 500; }
+    .current-path { font-weight: 600; color: #1e293b; }
+    .sep { font-size: 18px; color: #cbd5e1; }
+
     .spacer { flex: 1; }
-    .user-btn { display: flex; align-items: center; gap: 8px; }
-    .role-chip {
-      background: #e3f2fd; color: #1565c0; padding: 2px 10px;
-      border-radius: 12px; font-size: 12px; font-weight: 600;
+    .actions { display: flex; align-items: center; gap: 16px; }
+    
+    .action-btn { 
+      color: #475569; 
+      position: relative;
+    }
+    .action-btn:hover { background: #f1f5f9; color: var(--primary); }
+    .badge {
+      position: absolute; top: 4px; right: 4px;
+      background: var(--error); color: #fff;
+      font-size: 10px; font-weight: 700;
+      padding: 2px 5px; border-radius: 10px;
+      border: 2px solid #fff;
+    }
+    
+    .user-profile { display: flex; align-items: center; gap: 12px; padding: 4px 8px; border-radius: 12px; transition: var(--transition); }
+    .user-profile:hover { background: #f1f5f9; }
+    .user-info { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; margin-right: 12px; }
+    .user-email { font-size: 13px; font-weight: 600; color: #1e293b; }
+    .user-role { font-size: 11px; text-transform: uppercase; color: var(--primary); font-weight: 700; }
+    .avatar {
+      width: 40px; height: 40px; background: var(--primary-light); color: var(--primary);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-family: 'Outfit'; border: 2px solid #fff;
+      box-shadow: var(--shadow-sm);
     }
 
-    /* Content */
-    .main-content { display: flex; flex-direction: column; background: #f5f7fa; }
-    .content-area { flex: 1; overflow-y: auto; }
+    .menu-header { font-weight: 700; color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Content Area */
+    .main-content { background: var(--bg-main); }
+    .content-area { padding: 32px; max-width: 1400px; margin: 0 auto; width: 100%; }
   `]
 })
 export class AppComponent {
@@ -145,5 +236,10 @@ export class AppComponent {
   visibleNavItems() {
     const role = this.auth.currentUser()?.role ?? '';
     return this.navItems.filter(n => n.roles.includes(role));
+  }
+
+  toggleNotifications() {
+    // Placeholder for real notification logic
+    alert('TanCura Intelligence: You have 3 pending claim reviews.');
   }
 }

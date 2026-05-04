@@ -34,8 +34,8 @@ The core hub for medical orchestration. Features real-time KPI monitoring, claim
 
 ```mermaid
 graph TD
-    A[TanCura Web Client (Angular 17)] --> B[Nginx Reverse Proxy]
-    B --> C[Claims API (ASP.NET Core 8)]
+    A["TanCura Web Client (Angular 17)"] --> B[Nginx Reverse Proxy]
+    B --> C["Claims API (ASP.NET Core 8)"]
     C --> D[(SQL Server 2022)]
     D --> E[Intelligent Worker Service]
     E --> F[Mock Payer Clearinghouse]

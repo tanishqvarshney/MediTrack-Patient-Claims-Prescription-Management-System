@@ -19,17 +19,35 @@ import { Provider } from '../../../../shared/models/models';
     <div class="page-header">
       <div class="header-content">
         <h1>Provider Network</h1>
-        <p>Monitor and manage healthcare providers within the MediTrack network.</p>
+        <p>Monitor and manage healthcare providers within the TanCura network.</p>
       </div>
-      <button mat-raised-button color="primary">
-        <mat-icon>add_business</mat-icon> Add Provider
-      </button>
+      <div class="actions">
+        <button mat-icon-button (click)="loadProviders()" matTooltip="Reload Data">
+          <mat-icon>refresh</mat-icon>
+        </button>
+        <button mat-raised-button color="primary">
+          <mat-icon>add_business</mat-icon> Add Provider
+        </button>
+      </div>
     </div>
 
     <div class="container">
       @if (loading()) {
         <div class="loader">
           <mat-spinner diameter="40"></mat-spinner>
+          <p>Retrieving provider network...</p>
+        </div>
+      } @else if (error()) {
+        <div class="error-state">
+          <mat-icon color="warn">error_outline</mat-icon>
+          <p>{{ error() }}</p>
+          <button mat-stroked-button (click)="loadProviders()">Try Again</button>
+        </div>
+      } @else if (providers().length === 0) {
+        <div class="empty-state">
+          <mat-icon>search_off</mat-icon>
+          <p>No providers found in the network.</p>
+          <button mat-stroked-button color="primary">Add Your First Provider</button>
         </div>
       } @else {
         <mat-card class="table-card">
@@ -82,8 +100,9 @@ import { Provider } from '../../../../shared/models/models';
       padding: 24px 32px; background: #fff; border-bottom: 1px solid #e0e0e0;
       display: flex; justify-content: space-between; align-items: center;
     }
-    h1 { margin: 0; font-size: 24px; font-weight: 700; color: #0d1b2a; }
-    p { margin: 4px 0 0; color: #666; }
+    .header-content h1 { margin: 0; font-size: 24px; font-weight: 700; color: #0d1b2a; }
+    .header-content p { margin: 4px 0 0; color: #666; }
+    .actions { display: flex; gap: 8px; align-items: center; }
     .container { padding: 32px; }
     .table-card { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     table { width: 100%; }
@@ -100,7 +119,13 @@ import { Provider } from '../../../../shared/models/models';
     }
     .status-indicator.active { background: #e8f5e9; color: #2e7d32; }
     code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
-    .loader { display: flex; justify-content: center; padding: 48px; }
+    .loader, .empty-state, .error-state { 
+      display: flex; flex-direction: column; align-items: center; 
+      justify-content: center; padding: 64px; text-align: center;
+      background: #fafafa; border-radius: 12px; border: 2px dashed #eee;
+    }
+    .loader p, .empty-state p, .error-state p { margin-top: 16px; color: #666; }
+    .empty-state mat-icon, .error-state mat-icon { font-size: 48px; width: 48px; height: 48px; color: #bdbdbd; }
   `]
 })
 export class ProvidersComponent implements OnInit {
@@ -108,23 +133,36 @@ export class ProvidersComponent implements OnInit {
   
   providers = signal<Provider[]>([]);
   loading = signal(true);
+  error = signal<string | null>(null);
   displayedColumns = ['name', 'npi', 'status', 'actions'];
 
   ngOnInit() {
+    this.loadProviders();
+  }
+
+  loadProviders() {
+    this.loading.set(true);
+    this.error.set(null);
     this.directory.getProviders().subscribe({
       next: (data) => {
         this.providers.set(data);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false)
+      error: (err) => {
+        console.error('Failed to load providers', err);
+        this.error.set('Could not load the provider network. Please check your connection or session.');
+        this.loading.set(false);
+      }
     });
   }
 
   getIcon(specialty: string): string {
-    if (specialty.includes('General')) return 'medical_services';
+    if (specialty.includes('General') || specialty.includes('Family')) return 'medical_services';
     if (specialty.includes('Cardiology')) return 'favorite';
     if (specialty.includes('Pediatrics')) return 'child_care';
     if (specialty.includes('Emergency')) return 'emergency';
+    if (specialty.includes('Dermatology')) return 'face';
+    if (specialty.includes('Neurology')) return 'psychology';
     return 'health_and_safety';
   }
 }

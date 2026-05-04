@@ -1,4 +1,4 @@
-name: MediTrack CI/CD
+name: TanCura CI/CD
 
 on:
   push:
@@ -43,20 +43,20 @@ jobs:
           key: nuget-${{ hashFiles('**/packages.lock.json') }}
 
       - name: Restore dependencies
-        run: dotnet restore ./backend/MediTrack.sln
+        run: dotnet restore ./backend/TanCura.sln
 
       - name: Build
-        run: dotnet build ./backend/MediTrack.sln --no-restore --configuration Release
+        run: dotnet build ./backend/TanCura.sln --no-restore --configuration Release
 
       - name: Run tests with coverage
         run: |
-          dotnet test ./backend/MediTrack.Tests \
+          dotnet test ./backend/TanCura.Tests \
             --no-build --configuration Release \
             --logger "trx;LogFileName=test-results.trx" \
             --collect:"XPlat Code Coverage" \
             --results-directory ./TestResults
         env:
-          ConnectionStrings__Default: "Server=localhost,1433;Database=MediTrackTest;User=sa;Password=Test@1234!;TrustServerCertificate=True"
+          ConnectionStrings__Default: "Server=localhost,1433;Database=TanCuraTest;User=sa;Password=Test@1234!;TrustServerCertificate=True"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -126,7 +126,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./backend
-          file: ./backend/MediTrack.Api/Dockerfile
+          file: ./backend/TanCura.Api/Dockerfile
           push: true
           tags: |
             ${{ env.IMAGE_API }}:${{ github.sha }}
@@ -138,7 +138,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./backend
-          file: ./backend/MediTrack.Worker/Dockerfile
+          file: ./backend/TanCura.Worker/Dockerfile
           push: true
           tags: |
             ${{ env.IMAGE_WORKER }}:${{ github.sha }}
@@ -175,7 +175,7 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           envs: IMAGE_API,IMAGE_WORKER,IMAGE_FRONTEND
           script: |
-            cd /opt/meditrack
+            cd /opt/tancura
             export IMAGE_API=$IMAGE_API
             export IMAGE_WORKER=$IMAGE_WORKER
             export IMAGE_FRONTEND=$IMAGE_FRONTEND

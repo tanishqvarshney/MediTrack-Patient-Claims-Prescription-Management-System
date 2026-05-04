@@ -22,7 +22,7 @@ import { AuthService } from '../../../core/auth/auth.service';
         <mat-card-header>
           <div class="logo">
             <mat-icon>local_hospital</mat-icon>
-            <h1>MediTrack</h1>
+            <h1>TanCura</h1>
           </div>
           <p class="subtitle">Claims & Prescription Management</p>
         </mat-card-header>

@@ -45,6 +45,10 @@ export class PharmacyService {
   getFormulary(ndcCode: string) {
     return this.http.get<FormularyResult>(`${this.base}/formulary/${ndcCode}`);
   }
+
+  searchFormulary(query: string) {
+    return this.http.get<FormularyResult[]>(`${this.base}/search`, { params: { query } });
+  }
 }
 
 @Injectable({ providedIn: 'root' })

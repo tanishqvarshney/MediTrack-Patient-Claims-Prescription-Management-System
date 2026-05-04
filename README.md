@@ -1,4 +1,4 @@
-# MediTrack — Patient Claims & Prescription Management System
+# TanCura — Patient Claims & Prescription Management System
 
 A production-grade healthcare claims processing system built with **ASP.NET Core 8**, **Angular 17**, and **SQL Server**.
 
@@ -7,14 +7,14 @@ A production-grade healthcare claims processing system built with **ASP.NET Core
 ## 🏗 Project Structure
 
 ```
-meditrack/
+tancura/
 ├── backend/
-│   ├── MediTrack.Core/            # Domain models, DTOs, interfaces, enums
-│   ├── MediTrack.Infrastructure/  # EF Core DbContext, repositories, services
-│   ├── MediTrack.Api/             # Claims REST API + Auth
-│   ├── MediTrack.PharmacyApi/     # Pharmacy & Formulary API
-│   ├── MediTrack.Worker/          # Background claims polling service
-│   └── MediTrack.Tests/           # xUnit unit + integration tests
+│   ├── TanCura.Core/            # Domain models, DTOs, interfaces, enums
+│   ├── TanCura.Infrastructure/  # EF Core DbContext, repositories, services
+│   ├── TanCura.Api/             # Claims REST API + Auth
+│   ├── TanCura.PharmacyApi/     # Pharmacy & Formulary API
+│   ├── TanCura.Worker/          # Background claims polling service
+│   └── TanCura.Tests/           # xUnit unit + integration tests
 ├── frontend/                      # Angular 17 SPA
 ├── db/init/                       # SQL seed scripts
 ├── nginx/                         # Reverse proxy config
@@ -52,16 +52,16 @@ docker-compose up -d
 cd backend
 
 # Apply migrations and seed data
-dotnet ef database update --project MediTrack.Api
+dotnet ef database update --project TanCura.Api
 
 # Run Claims API
-dotnet run --project MediTrack.Api
+dotnet run --project TanCura.Api
 
 # Run Worker Service
-dotnet run --project MediTrack.Worker
+dotnet run --project TanCura.Worker
 
 # Run Tests
-dotnet test MediTrack.Tests
+dotnet test TanCura.Tests
 ```
 
 ### Frontend Prerequisites
@@ -81,7 +81,7 @@ ng serve
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@meditrack.io | Password123! |
+| Admin | admin@tancura.io | Password123! |
 | Provider | provider@clinic.com | Password123! |
 | Patient | patient@example.com | Password123! |
 
@@ -108,7 +108,7 @@ Full interactive docs: `http://localhost:5001/swagger`
 
 ```bash
 # Backend unit tests
-dotnet test backend/MediTrack.Tests --configuration Release
+dotnet test backend/TanCura.Tests --configuration Release
 
 # Frontend tests
 cd frontend && npm test -- --watch=false --browsers=ChromeHeadless

@@ -33,7 +33,7 @@ interface NavItem {
           <div class="sidenav-logo">
             <mat-icon class="logo-icon">local_hospital</mat-icon>
             @if (!collapsed()) {
-              <span class="logo-text">MediTrack</span>
+              <span class="logo-text">TanCura</span>
             }
           </div>
 

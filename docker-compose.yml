@@ -28,13 +28,13 @@ services:
   claims-api:
     build:
       context: ./backend
-      dockerfile: MediTrack.Api/Dockerfile
+      dockerfile: TanCura.Api/Dockerfile
     depends_on:
       sqlserver:
         condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Default: "Server=sqlserver;Database=MediTrack;User=sa;Password=${DB_PASSWORD:-Dev@1234!};TrustServerCertificate=True"
+      ConnectionStrings__Default: "Server=sqlserver;Database=TanCura;User=sa;Password=${DB_PASSWORD:-Dev@1234!};TrustServerCertificate=True"
       Jwt__Secret: "${JWT_SECRET:-supersecret_change_this_in_production_min32chars!}"
     ports:
       - "5001:8080"
@@ -42,12 +42,12 @@ services:
   worker-service:
     build:
       context: ./backend
-      dockerfile: MediTrack.Worker/Dockerfile
+      dockerfile: TanCura.Worker/Dockerfile
     depends_on:
       sqlserver:
         condition: service_healthy
     environment:
-      ConnectionStrings__Default: "Server=sqlserver;Database=MediTrack;User=sa;Password=${DB_PASSWORD:-Dev@1234!};TrustServerCertificate=True"
+      ConnectionStrings__Default: "Server=sqlserver;Database=TanCura;User=sa;Password=${DB_PASSWORD:-Dev@1234!};TrustServerCertificate=True"
       Worker__PollingIntervalSeconds: "30"
     restart: unless-stopped
 

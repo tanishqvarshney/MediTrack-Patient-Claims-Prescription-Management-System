@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "meditrack-ui": {
+    "tancura-ui": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -19,7 +19,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/meditrack-ui",
+            "outputPath": "dist/tancura-ui",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -53,8 +53,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": { "buildTarget": "meditrack-ui:build:production" },
-            "development": { "buildTarget": "meditrack-ui:build:development" }
+            "production": { "buildTarget": "tancura-ui:build:production" },
+            "development": { "buildTarget": "tancura-ui:build:development" }
           },
           "defaultConfiguration": "development",
           "options": {

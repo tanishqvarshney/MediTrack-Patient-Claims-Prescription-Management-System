@@ -26,7 +26,9 @@ export interface LineItem {
 
 export interface SubmitClaimRequest {
   patientId: string;
+  patientName: string;
   providerId: string;
+  providerName: string;
   serviceDate: string;
   totalAmount: number;
   lineItems: LineItemRequest[];
@@ -60,6 +62,8 @@ export type ClaimStatus = 'Pending' | 'Processing' | 'Approved' | 'Rejected' | '
 export interface FormularyResult {
   ndcCode: string;
   drugName: string;
+  dosage: string;
+  strength: string;
   tier: number;
   tierLabel: string;
   copay: number;
@@ -71,6 +75,8 @@ export interface FormularyResult {
 export interface FormularyAlternative {
   ndcCode: string;
   drugName: string;
+  dosage: string;
+  strength: string;
   tier: number;
   copay: number;
 }
@@ -105,6 +111,9 @@ export interface ClaimMetrics {
   pending: number;
   totalAmountProcessed: number;
   avgProcessingHours: number;
+  activePatients: number;
+  clinicalAccuracy: number;
+  networkEfficiency: number;
   dailyBreakdown: DailyBreakdown[];
 }
 
@@ -117,13 +126,14 @@ export interface DailyBreakdown {
 
 export interface AuditLog {
   logId: number;
-  entityType: string;
-  entityId: string;
-  action: string;
+  timestamp: string;
   userId: string;
   userRole: string;
+  action: string;
+  targetEntity: string;
+  entityId: string;
   ipAddress?: string;
-  timestamp: string;
+  status: 'Success' | 'Failure';
 }
 
 // ── Directory Models ────────────────────────────────────────────────────────
@@ -132,19 +142,27 @@ export interface Patient {
   firstName: string;
   lastName: string;
   dateOfBirth: string;
-  memberId: string;
+  gender: 'Male' | 'Female' | 'Other';
   email: string;
+  contactNumber: string;
+  address: string;
+  memberId: string;
   isActive: boolean;
   insurancePlanId?: string;
   insurancePlan?: InsurancePlan;
+  emergencyContact?: string;
 }
 
 export interface Provider {
   providerId: string;
   name: string;
+  email: string;
   npi: string;
+  licenseNumber: string;
   specialty: string;
+  contactNumber: string;
   isActive: boolean;
+  role?: string;
 }
 
 export interface InsurancePlan {

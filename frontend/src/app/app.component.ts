@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
@@ -7,7 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from './core/auth/auth.service';
+import { SearchService } from './core/services/search.service';
 
 interface NavItem {
   icon: string;
@@ -20,89 +23,86 @@ interface NavItem {
   selector: 'app-root',
   standalone: true,
   imports: [
+    CommonModule,
     RouterOutlet, RouterLink, RouterLinkActive,
     MatToolbarModule, MatSidenavModule, MatListModule,
-    MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule
+    MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule, MatDividerModule
   ],
   template: `
     @if (auth.isAuthenticated) {
       <mat-sidenav-container class="app-container">
         <!-- Sidebar -->
         <mat-sidenav mode="side" opened class="sidenav" [class.collapsed]="collapsed()">
-          <!-- Logo -->
           <div class="sidenav-logo">
             <div class="logo-circle">
-              <mat-icon class="logo-icon">local_hospital</mat-icon>
+              <mat-icon>local_hospital</mat-icon>
             </div>
             @if (!collapsed()) {
-              <span class="logo-text">TanCura</span>
+              <span class="logo-text text-gradient">TanCura</span>
             }
           </div>
 
           <mat-nav-list class="nav-list">
             @for (item of visibleNavItems(); track item.route) {
-              <a mat-list-item [routerLink]="item.route" routerLinkActive="active-nav"
-                class="nav-item"
-                [matTooltip]="collapsed() ? item.label : ''" matTooltipPosition="right">
+              <a mat-list-item [routerLink]="item.route" routerLinkActive="active-link" 
+                 class="nav-item" [matTooltip]="collapsed() ? item.label : ''" matTooltipPosition="right">
                 <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
                 @if (!collapsed()) {
-                  <span matListItemTitle class="nav-label">{{ item.label }}</span>
+                  <span class="nav-label">{{ item.label }}</span>
                 }
               </a>
             }
           </mat-nav-list>
 
-          <!-- Collapse toggle -->
-          <div class="sidenav-footer">
-            <button mat-icon-button (click)="collapsed.set(!collapsed())" class="toggle-btn"
-              [matTooltip]="collapsed() ? 'Expand Menu' : 'Collapse Menu'" matTooltipPosition="right">
-              <mat-icon>{{ collapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>
+          <div class="sidebar-footer">
+            <button mat-icon-button class="toggle-btn" (click)="collapsed.set(!collapsed())">
+              <mat-icon>{{ collapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
             </button>
           </div>
         </mat-sidenav>
 
         <!-- Main Content -->
-        <mat-sidenav-content class="main-content">
-          <!-- Top Toolbar -->
-          <mat-toolbar class="top-bar glass">
-            <div class="breadcrumb">
-              <span class="root-path">Dashboard</span>
-              <mat-icon class="sep">chevron_right</mat-icon>
-              <span class="current-path">Overview</span>
-            </div>
-            
-            <span class="spacer"></span>
-
-            <div class="actions">
-              <button mat-icon-button class="action-btn" matTooltip="Notifications" (click)="toggleNotifications()">
-                <mat-icon>notifications</mat-icon>
-                <span class="badge">3</span>
-              </button>
-              
-              <button mat-button [matMenuTriggerFor]="userMenu" class="user-profile">
-                @if (auth.currentUser(); as u) {
-                  <div class="user-info">
-                    <span class="user-email">{{ u.email }}</span>
-                    <span class="user-role">{{ u.role }}</span>
-                  </div>
-                  <div class="avatar">
-                    {{ u.email[0].toUpperCase() }}
-                  </div>
-                }
-              </button>
-            </div>
-
-            <mat-menu #userMenu="matMenu" class="premium-menu">
-              <div class="menu-header" mat-menu-item disabled>
-                <mat-icon>account_circle</mat-icon>
-                <span>My Account</span>
+        <mat-sidenav-content class="main-content-wrapper">
+          <div class="toolbar-sticky-container">
+            <mat-toolbar class="toolbar">
+              <div class="search-pill">
+                <mat-icon>search</mat-icon>
+                <input type="text" placeholder="Search claims, patients, providers..."
+                  (input)="onSearch($event)">
               </div>
-              <mat-divider></mat-divider>
-              <button mat-menu-item (click)="auth.logout()">
-                <mat-icon>logout</mat-icon> <span>Sign Out</span>
-              </button>
-            </mat-menu>
-          </mat-toolbar>
+              
+              <span class="toolbar-spacer"></span>
+
+              <div class="user-actions">
+                <button mat-icon-button class="icon-btn">
+                  <mat-icon>notifications_none</mat-icon>
+                </button>
+                <button mat-icon-button class="icon-btn">
+                  <mat-icon>settings</mat-icon>
+                </button>
+                
+                <button mat-button [matMenuTriggerFor]="userMenu" class="user-pill">
+                  @if (auth.currentUser(); as u) {
+                    <span class="user-name">{{ u.email.split('@')[0] }}</span>
+                    <div class="avatar">
+                      {{ u.email[0].toUpperCase() }}
+                    </div>
+                  }
+                </button>
+              </div>
+
+              <mat-menu #userMenu="matMenu" class="premium-menu">
+                <div class="menu-header" mat-menu-item disabled>
+                  <mat-icon>account_circle</mat-icon>
+                  <span>My Account</span>
+                </div>
+                <mat-divider></mat-divider>
+                <button mat-menu-item (click)="auth.logout()">
+                  <mat-icon>logout</mat-icon> <span>Sign Out</span>
+                </button>
+              </mat-menu>
+            </mat-toolbar>
+          </div>
 
           <!-- Router outlet -->
           <div class="content-area slide-up">
@@ -115,124 +115,118 @@ interface NavItem {
     }
   `,
   styles: [`
-    :host { display: block; height: 100vh; }
-    .app-container { height: 100%; }
-
-    /* Sidenav */
-    .sidenav {
-      width: 280px; background: #020617; color: #fff;
-      display: flex; flex-direction: column;
-      border-right: 1px solid rgba(255,255,255, 0.05);
-      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .sidenav.collapsed { width: 80px; }
+    :host { display: block; height: 100vh; overflow: hidden; }
+    .app-container { height: 100vh; background: var(--bg-main); border: none !important; }
     
+    mat-sidenav-container { background: var(--bg-main); }
+    mat-sidenav-content { 
+      display: flex; flex-direction: column; 
+      height: 100vh; overflow-y: auto;
+      background: var(--bg-main);
+    }
+
+    .sidenav {
+      width: 280px; border: none !important; background: var(--bg-side);
+      box-shadow: 4px 0 24px rgba(15, 23, 42, 0.05); transition: var(--transition);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .sidenav.collapsed { width: 88px; }
+
     .sidenav-logo {
-      display: flex; align-items: center; gap: 14px;
-      padding: 40px 24px;
+      height: 80px; display: flex; align-items: center; gap: 16px;
+      padding: 0 24px; margin-bottom: 24px;
     }
     .logo-circle {
-      width: 44px; height: 44px; background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      border-radius: 14px; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+      width: 40px; height: 40px; background: var(--primary);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2); flex-shrink: 0;
     }
-    .logo-icon { color: #fff; font-size: 26px; }
-    .logo-text { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -1px; color: #fff; }
+    .logo-circle mat-icon { color: #fff; font-size: 24px; width: 24px; height: 24px; }
+    .logo-text { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
 
-    .nav-list { padding: 0 16px; flex: 1; }
+    .nav-list { padding: 0 12px; flex: 1; }
     .nav-item {
-      height: 56px !important; border-radius: 16px !important;
-      margin-bottom: 8px !important; 
-      color: #94a3b8 !important;
-      transition: var(--transition);
-      display: flex !important; align-items: center !important;
+      height: 52px !important; border-radius: 12px !important;
+      margin-bottom: 4px !important; transition: var(--transition);
+      color: var(--text-muted) !important;
     }
-    .nav-item * { color: #94a3b8 !important; }
+    .nav-item:hover { background: #f8fafc !important; color: var(--text-main) !important; }
+    .active-link { background: var(--primary-light) !important; color: var(--primary) !important; font-weight: 700 !important; }
     
-    .nav-item mat-icon { transition: var(--transition); opacity: 0.8; }
-    
-    .nav-item:hover { 
-      background: rgba(255,255,255, 0.05) !important; 
-    }
-    .nav-item:hover * { color: #fff !important; opacity: 1 !important; }
-    
-    .nav-item.active-nav { 
-      background: rgba(37, 99, 235, 0.1) !important; 
-      border: 1px solid rgba(37, 99, 235, 0.2) !important;
-    }
-    .nav-item.active-nav * { color: #60a5fa !important; opacity: 1 !important; font-weight: 700 !important; }
+    .nav-label { font-size: 15px; font-weight: 500; }
+    .nav-item mat-icon { font-size: 22px; width: 22px; height: 22px; margin-right: 12px; }
 
-    .sidenav-footer { padding: 24px; border-top: 1px solid rgba(255,255,255, 0.05); }
-    .toggle-btn { color: #64748b; }
-    .toggle-btn:hover { color: #fff; background: rgba(255,255,255, 0.05); }
+    .sidebar-footer {
+      padding: 20px; border-top: 1px solid #f1f5f9;
+      display: flex; justify-content: center;
+    }
+    .toggle-btn { background: #f1f5f9; color: #64748b; }
 
-    /* Top bar */
-    .top-bar {
-      height: 80px; padding: 0 32px;
-      display: flex; align-items: center;
-      border-bottom: 1px solid rgba(255,255,255, 0.05);
-      background: rgba(2, 6, 23, 0.8) !important;
-      backdrop-filter: blur(20px);
-    }
-    .breadcrumb { display: flex; align-items: center; gap: 12px; color: #64748b; font-size: 14px; }
-    .root-path { font-weight: 500; }
-    .current-path { font-weight: 600; color: #fff; }
-    .sep { font-size: 20px; color: #334155; }
+    .main-content-wrapper { background: var(--bg-main); }
+    .toolbar-sticky-container { position: sticky; top: 0; z-index: 100; background: var(--bg-main); }
+    .toolbar { background: transparent !important; height: 80px; padding: 0 32px; border: none !important; }
+    .toolbar-spacer { flex: 1 1 auto; }
 
-    .spacer { flex: 1; }
-    .actions { display: flex; align-items: center; gap: 24px; }
-    
-    .action-btn { 
-      color: #94a3b8; 
-      position: relative;
+    .search-pill {
+      background: #fff; border-radius: 9999px; height: 48px; width: 340px;
+      display: flex; align-items: center; padding: 0 20px; gap: 12px;
+      border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
-    .action-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
-    .badge {
-      position: absolute; top: 6px; right: 6px;
-      background: #ef4444; color: #fff;
-      font-size: 9px; font-weight: 800;
-      padding: 1px 4px; border-radius: 10px;
-      border: 2px solid #020617;
+    .search-pill mat-icon { color: #94a3b8; font-size: 20px; width: 20px; height: 20px; }
+    .search-pill input { background: transparent; border: none; outline: none; width: 100%; font-size: 14px; color: var(--text-main); }
+
+    .user-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-btn { color: #94a3b8; }
+    .user-pill {
+      display: flex; align-items: center; gap: 12px;
+      padding: 4px 4px 4px 16px !important; border-radius: 14px;
+      height: 48px; transition: var(--transition);
     }
-    
-    .user-profile { display: flex; align-items: center; gap: 12px; padding: 6px 12px; border-radius: 16px; transition: var(--transition); border: 1px solid transparent; }
-    .user-profile:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
-    .user-info { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; margin-right: 14px; }
-    .user-email { font-size: 14px; font-weight: 600; color: #fff; }
-    .user-role { font-size: 11px; text-transform: uppercase; color: #60a5fa; font-weight: 700; letter-spacing: 0.5px; }
+    .user-pill:hover { background: #f1f5f9; }
+    .user-name { font-size: 14px; font-weight: 600; color: var(--text-main); }
     .avatar {
-      width: 44px; height: 44px; background: rgba(37, 99, 235, 0.1); color: #60a5fa;
-      border-radius: 14px; display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-family: 'Outfit'; border: 1px solid rgba(37, 99, 235, 0.2);
+      width: 40px; height: 40px; border-radius: 10px; background: #e2e8f0;
+      color: var(--text-main); display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px;
     }
 
-    .menu-header { font-weight: 700; color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-
-    /* Content Area */
-    .main-content { background: #020617; }
-    .content-area { padding: 40px; max-width: 1600px; margin: 0 auto; width: 100%; }
+    .content-area { padding: 32px; padding-top: 0; flex: 1; }
   `]
 })
 export class AppComponent {
+  private router = inject(Router);
+  private searchService = inject(SearchService);
   auth = inject(AuthService);
   collapsed = signal(false);
 
+  onSearch(event: Event) {
+    const q = (event.target as HTMLInputElement).value;
+    this.searchService.updateQuery(q);
+    
+    const currentUrl = this.router.url;
+    const isSearchable = currentUrl.startsWith('/claims') || currentUrl.startsWith('/pharmacy');
+    
+    console.log('AppComponent: onSearch query:', q, 'url:', currentUrl, 'isSearchable:', isSearchable);
+
+    if (q && !isSearchable) {
+      console.log('AppComponent: Redirecting to /claims for global search');
+      this.router.navigate(['/claims']);
+    }
+  }
+
   private navItems: NavItem[] = [
-    { icon: 'receipt_long', label: 'Claims',     route: '/claims',   roles: ['Patient', 'Provider', 'Admin'] },
-    { icon: 'medication',   label: 'Pharmacy',   route: '/pharmacy', roles: ['Patient', 'Provider', 'Admin'] },
-    { icon: 'people',       label: 'Patients',   route: '/admin/patients',  roles: ['Admin'] },
-    { icon: 'medical_information', label: 'Providers', route: '/admin/providers', roles: ['Admin'] },
-    { icon: 'dashboard',    label: 'Dashboard',  route: '/admin',    roles: ['Admin'] },
-    { icon: 'history',      label: 'Audit Logs', route: '/admin/audit-logs', roles: ['Admin'] },
+    { icon: 'dashboard', label: 'Dashboard', route: '/admin', roles: ['Admin'] },
+    { icon: 'description', label: 'My Claims', route: '/claims', roles: ['Admin', 'Provider', 'Patient'] },
+    { icon: 'medical_services', label: 'Provider Network', route: '/admin/providers', roles: ['Admin'] },
+    { icon: 'people', label: 'Patient Directory', route: '/admin/patients', roles: ['Admin'] },
+    { icon: 'medication', label: 'Drug Formulary', route: '/pharmacy', roles: ['Admin', 'Provider', 'Patient'] },
+    { icon: 'history', label: 'Audit Logs', route: '/admin/audit-logs', roles: ['Admin'] },
+    { icon: 'settings', label: 'Settings', route: '/settings', roles: ['Admin', 'Provider', 'Patient'] }
   ];
 
-  visibleNavItems() {
-    const role = this.auth.currentUser()?.role ?? '';
-    return this.navItems.filter(n => n.roles.includes(role));
-  }
-
-  toggleNotifications() {
-    // Placeholder for real notification logic
-    alert('TanCura Intelligence: You have 3 pending claim reviews.');
-  }
+  visibleNavItems = computed(() => {
+    const role = this.auth.currentUser()?.role;
+    if (!role) return [];
+    return this.navItems.filter(item => item.roles.includes(role));
+  });
 }

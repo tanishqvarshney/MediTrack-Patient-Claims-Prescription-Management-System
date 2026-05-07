@@ -27,7 +27,7 @@ jobs:
 
       - name: Build
         working-directory: frontend
-        run: npm run build -- --configuration production --base-href /MediTrack-Patient-Claims-Prescription-Management-System/
+        run: npm run build -- --configuration production --base-href /TanCura-Patient-Claims-Prescription-Management-System/
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4

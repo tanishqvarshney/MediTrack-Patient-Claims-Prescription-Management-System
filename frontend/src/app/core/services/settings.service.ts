@@ -9,7 +9,7 @@ export interface UserSettings {
   autoLogout: boolean;
 }
 
-const STORAGE_KEY = 'tancura_v1_settings';
+const STORAGE_KEY = 'tancura_v2_settings';
 
 const DEFAULT_SETTINGS: UserSettings = {
   darkMode: false,

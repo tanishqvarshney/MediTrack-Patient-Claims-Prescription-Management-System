@@ -69,8 +69,8 @@ const INITIAL_PROVIDERS: Provider[] = [
   { providerId: 'pr23', name: 'Dr. Quinn Medicine Woman', email: 'quinn@frontier.net', npi: '8877665544', licenseNumber: 'LIC-88776', specialty: 'Frontier Medicine', contactNumber: '555-8877', isActive: true, role: 'Provider' }
 ];
 
-const PATIENTS_STORAGE_KEY = 'tancura_v1_patients_store';
-const PROVIDERS_STORAGE_KEY = 'tancura_v1_providers_store';
+const PATIENTS_STORAGE_KEY = 'tancura_v2_patients_store';
+const PROVIDERS_STORAGE_KEY = 'tancura_v2_providers_store';
 
 @Injectable({ providedIn: 'root' })
 export class DirectoryService {

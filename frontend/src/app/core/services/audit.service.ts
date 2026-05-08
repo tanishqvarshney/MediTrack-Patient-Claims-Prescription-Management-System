@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { AuditLog } from '../../shared/models/models';
 import { AuthService } from '../auth/auth.service';
 
-const STORAGE_KEY = 'tancura_v1_audit_ledger';
+const STORAGE_KEY = 'tancura_v2_audit_ledger';
 
 const INITIAL_LOGS: AuditLog[] = [
   { logId: 100, timestamp: new Date(Date.now() - 86400000 * 2).toISOString(), userId: 'system-init', userRole: 'System', action: 'Initialized', targetEntity: 'Core Engine', entityId: 'SYS-001', status: 'Success' },

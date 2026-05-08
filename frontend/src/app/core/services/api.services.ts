@@ -41,7 +41,7 @@ const INITIAL_MOCK_CLAIMS: ClaimSummary[] = [
   { claimId: 'c28', claimNumber: 'CLN-2023-028', patientName: 'Steven Scott', providerName: 'Northwest Medical Group', serviceDate: '2023-11-18', totalAmount: 890.00, status: 'Approved' }
 ];
 
-const STORAGE_KEY = 'tancura_v1_claims_store';
+const STORAGE_KEY = 'tancura_v2_claims_store';
 
 function loadFromStorage(): ClaimSummary[] {
   if (typeof window === 'undefined') return [...INITIAL_MOCK_CLAIMS];

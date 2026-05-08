@@ -9,6 +9,7 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ClaimsService } from '../../../core/services/api.services';
 import { ClaimMetrics } from '../../../shared/models/models';
 
@@ -17,7 +18,7 @@ import { ClaimMetrics } from '../../../shared/models/models';
   standalone: true,
   imports: [
     CommonModule, MatCardModule, MatIconModule, MatButtonModule,
-    MatProgressBarModule, MatMenuModule, MatSnackBarModule, BaseChartDirective
+    MatProgressBarModule, MatMenuModule, MatSnackBarModule, MatTooltipModule, BaseChartDirective
   ],
   template: `
     <div class="dashboard-container fade-in">
@@ -65,25 +66,28 @@ import { ClaimMetrics } from '../../../shared/models/models';
               <h3>Claims Performance (30 Days)</h3>
               <button mat-icon-button [matMenuTriggerFor]="chartMenu" 
                       matTooltip="Chart Options"
+                      (click)="$event.stopPropagation()"
                       (menuOpened)="onMenuOpen()">
                 <mat-icon>more_vert</mat-icon>
               </button>
 
-              <mat-menu #chartMenu="matMenu" class="premium-menu">
-                <button mat-menu-item (click)="exportChartData()">
-                  <mat-icon>download</mat-icon>
-                  <span>Export to CSV</span>
-                </button>
-                <button mat-menu-item (click)="toggleLegend()">
-                  <mat-icon>{{ lineChartOptions!.plugins!.legend!.display ? 'visibility_off' : 'visibility' }}</mat-icon>
-                  <span>{{ lineChartOptions!.plugins!.legend!.display ? 'Hide' : 'Show' }} Legend</span>
-                </button>
-                <mat-divider></mat-divider>
-                <button mat-menu-item (click)="refreshData()">
-                  <mat-icon>refresh</mat-icon>
-                  <span>Refresh Telemetry</span>
-                </button>
-              </mat-menu>
+            </div>
+            
+            <mat-menu #chartMenu="matMenu" class="premium-menu">
+              <button mat-menu-item (click)="exportChartData()">
+                <mat-icon>download</mat-icon>
+                <span>Export to CSV</span>
+              </button>
+              <button mat-menu-item (click)="toggleLegend()">
+                <mat-icon>{{ lineChartOptions!.plugins!.legend!.display ? 'visibility_off' : 'visibility' }}</mat-icon>
+                <span>{{ lineChartOptions!.plugins!.legend!.display ? 'Hide' : 'Show' }} Legend</span>
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="refreshData()">
+                <mat-icon>refresh</mat-icon>
+                <span>Refresh Telemetry</span>
+              </button>
+            </mat-menu>
             </div>
             <div class="chart-wrapper">
               <canvas baseChart

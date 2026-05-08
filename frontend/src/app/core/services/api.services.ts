@@ -184,7 +184,7 @@ export class ClaimsService {
       this.mockClaims[idx] = { ...claim, status };
       saveToStorage(this.mockClaims);
       this.auditService.log('Modified', 'Claim', claimId);
-      return of(void 0).pipe(delay(400));
+      return of({ success: true }).pipe(delay(400));
     }
     return of({ success: false }).pipe(delay(400));
   }

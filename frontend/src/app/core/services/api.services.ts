@@ -20,18 +20,28 @@ const INITIAL_MOCK_CLAIMS: ClaimSummary[] = [
   { claimId: 'c8', claimNumber: 'CLN-2023-008', patientName: 'Linda Anderson', serviceDate: '2023-10-28', totalAmount: 730.00, status: 'Paid' }
 ];
 
-const STORAGE_KEY = 'tancura_claims_store';
+const STORAGE_KEY = 'tancura_v1_claims_store';
 
 function loadFromStorage(): ClaimSummary[] {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    try { return JSON.parse(saved); } catch { return INITIAL_MOCK_CLAIMS; }
+  if (typeof window === 'undefined') return [...INITIAL_MOCK_CLAIMS];
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (e) {
+    console.warn('ClaimsService: Failed to load from storage', e);
   }
-  return INITIAL_MOCK_CLAIMS;
+  return [...INITIAL_MOCK_CLAIMS];
 }
 
 function saveToStorage(claims: ClaimSummary[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(claims));
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(claims));
+  } catch (e) {
+    console.error('ClaimsService: Failed to save to storage', e);
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -39,7 +49,6 @@ export class ClaimsService {
   private http = inject(HttpClient);
   private base = `${environment.apiUrl}/claims`;
 
-  // Use a shared array instance
   // Use persistent storage
   public mockClaims = loadFromStorage();
 
@@ -70,7 +79,7 @@ export class ClaimsService {
       }
     };
 
-    this.mockClaims.unshift(newClaim);
+    this.mockClaims = [newClaim, ...this.mockClaims];
     saveToStorage(this.mockClaims);
     
     return of(response).pipe(delay(1000));
@@ -103,8 +112,6 @@ export class ClaimsService {
     }
 
     if (params.patientId) {
-      // In real app, we'd filter by patientId. For mock, we'll just show all if it's admin or filtered for patient.
-      // Assuming 'John Doe' for the mock patient.
       filtered = filtered.filter(c => c.patientName === 'John Doe');
     }
     
@@ -163,10 +170,10 @@ export class ClaimsService {
   }
 
   updateClaimStatus(claimId: string, status: ClaimStatus, rejectionReason?: string) {
-    const claim = this.mockClaims.find(c => c.claimId === claimId);
-    if (claim) {
-      claim.status = status as ClaimStatus;
-      if (rejectionReason) (claim as any).rejectionReason = rejectionReason;
+    const idx = this.mockClaims.findIndex(c => c.claimId === claimId);
+    if (idx !== -1) {
+      this.mockClaims[idx] = { ...this.mockClaims[idx], status: status as ClaimStatus };
+      if (rejectionReason) (this.mockClaims[idx] as any).rejectionReason = rejectionReason;
       saveToStorage(this.mockClaims);
     }
     return of({ success: true }).pipe(delay(800));
@@ -187,62 +194,43 @@ export class PharmacyService {
     if (!q) return of([]);
 
     const drugs: FormularyResult[] = [
-      // Statins
       { ndcCode: '0001-01', drugName: 'Lipitor', dosage: 'Tablet', strength: '20mg', tier: 1, tierLabel: 'Generic (atorvastatin)', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0001-02', drugName: 'Crestor', dosage: 'Tablet', strength: '10mg', tier: 2, tierLabel: 'Preferred Brand (rosuvastatin)', copay: 25.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0001-03', drugName: 'Zocor', dosage: 'Tablet', strength: '40mg', tier: 1, tierLabel: 'Generic (simvastatin)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0001-04', drugName: 'Pravachol', dosage: 'Tablet', strength: '20mg', tier: 1, tierLabel: 'Generic (pravastatin)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
-      
-      // Antihypertensives
       { ndcCode: '0002-01', drugName: 'Lisinopril', dosage: 'Tablet', strength: '10mg', tier: 1, tierLabel: 'Generic', copay: 0.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0002-02', drugName: 'Losartan', dosage: 'Tablet', strength: '50mg', tier: 1, tierLabel: 'Generic (Cozaar)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0002-03', drugName: 'Amlodipine', dosage: 'Tablet', strength: '5mg', tier: 1, tierLabel: 'Generic (Norvasc)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0002-04', drugName: 'Metoprolol Succinate', dosage: 'ER Tablet', strength: '50mg', tier: 1, tierLabel: 'Generic (Toprol XL)', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0002-05', drugName: 'Atenolol', dosage: 'Tablet', strength: '25mg', tier: 1, tierLabel: 'Generic (Tenormin)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
-
-      // Diabetes
       { ndcCode: '0003-01', drugName: 'Metformin', dosage: 'Tablet', strength: '500mg', tier: 1, tierLabel: 'Generic (Glucophage)', copay: 0.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0003-02', drugName: 'Glipizide', dosage: 'Tablet', strength: '5mg', tier: 1, tierLabel: 'Generic', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0003-03', drugName: 'Januvia', dosage: 'Tablet', strength: '100mg', tier: 2, tierLabel: 'Preferred Brand', copay: 35.00, requiresPriorAuth: true, alternatives: [] },
       { ndcCode: '0003-04', drugName: 'Ozempic', dosage: 'Pen', strength: '1mg/dose', tier: 2, tierLabel: 'Preferred Brand', copay: 50.00, requiresPriorAuth: true, alternatives: [] },
       { ndcCode: '0003-05', drugName: 'Jardiance', dosage: 'Tablet', strength: '25mg', tier: 2, tierLabel: 'Preferred Brand', copay: 40.00, requiresPriorAuth: true, alternatives: [] },
       { ndcCode: '0003-06', drugName: 'Humalog', dosage: 'KwikPen', strength: '100 units/mL', tier: 2, tierLabel: 'Preferred Brand', copay: 35.00, requiresPriorAuth: false, alternatives: [] },
-
-      // Antibiotics
       { ndcCode: '0004-01', drugName: 'Amoxicillin', dosage: 'Capsule', strength: '500mg', tier: 1, tierLabel: 'Generic', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0004-02', drugName: 'Azithromycin', dosage: 'Tablet', strength: '250mg', tier: 1, tierLabel: 'Generic (Z-Pak)', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0004-03', drugName: 'Ciprofloxacin', dosage: 'Tablet', strength: '500mg', tier: 1, tierLabel: 'Generic', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0004-04', drugName: 'Doxycycline', dosage: 'Capsule', strength: '100mg', tier: 1, tierLabel: 'Generic', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0004-05', drugName: 'Cephalexin', dosage: 'Capsule', strength: '500mg', tier: 1, tierLabel: 'Generic (Keflex)', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
-
-      // Pain & Anti-inflammatory
       { ndcCode: '0005-01', drugName: 'Ibuprofen', dosage: 'Tablet', strength: '800mg', tier: 1, tierLabel: 'Generic (Motrin)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0005-02', drugName: 'Naproxen', dosage: 'Tablet', strength: '500mg', tier: 1, tierLabel: 'Generic (Naprosyn)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0005-03', drugName: 'Tramadol', dosage: 'Tablet', strength: '50mg', tier: 1, tierLabel: 'Generic (Ultram)', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0005-04', drugName: 'Acetaminophen-Codeine', dosage: 'Tablet', strength: '300-30mg', tier: 1, tierLabel: 'Generic (Tylenol #3)', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
-
-      // Mental Health
       { ndcCode: '0006-01', drugName: 'Sertraline', dosage: 'Tablet', strength: '50mg', tier: 1, tierLabel: 'Generic (Zoloft)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0006-02', drugName: 'Fluoxetine', dosage: 'Capsule', strength: '20mg', tier: 1, tierLabel: 'Generic (Prozac)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0006-03', drugName: 'Escitalopram', dosage: 'Tablet', strength: '10mg', tier: 1, tierLabel: 'Generic (Lexapro)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0006-04', drugName: 'Bupropion XL', dosage: 'Tablet', strength: '150mg', tier: 1, tierLabel: 'Generic (Wellbutrin XL)', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0006-05', drugName: 'Alprazolam', dosage: 'Tablet', strength: '0.5mg', tier: 1, tierLabel: 'Generic (Xanax)', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
-
-      // GI
       { ndcCode: '0007-01', drugName: 'Omeprazole', dosage: 'DR Capsule', strength: '20mg', tier: 1, tierLabel: 'Generic (Prilosec)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0007-02', drugName: 'Pantoprazole', dosage: 'DR Tablet', strength: '40mg', tier: 1, tierLabel: 'Generic (Protonix)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0007-03', drugName: 'Famotidine', dosage: 'Tablet', strength: '20mg', tier: 1, tierLabel: 'Generic (Pepcid)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
-
-      // Respiratory
       { ndcCode: '0008-01', drugName: 'Albuterol', dosage: 'HFA Inhaler', strength: '90mcg', tier: 1, tierLabel: 'Generic (ProAir)', copay: 15.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0008-02', drugName: 'Fluticasone Propionate', dosage: 'Nasal Spray', strength: '50mcg', tier: 1, tierLabel: 'Generic (Flonase)', copay: 10.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0008-03', drugName: 'Montelukast', dosage: 'Tablet', strength: '10mg', tier: 1, tierLabel: 'Generic (Singulair)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0008-04', drugName: 'Advair Diskus', dosage: 'Inhaler', strength: '250/50mcg', tier: 3, tierLabel: 'Non-Preferred Brand', copay: 60.00, requiresPriorAuth: true, alternatives: [] },
-
-      // Thyroid
       { ndcCode: '0009-01', drugName: 'Levothyroxine', dosage: 'Tablet', strength: '50mcg', tier: 1, tierLabel: 'Generic (Synthroid)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
-
-      // Blood Thinners
       { ndcCode: '0010-01', drugName: 'Warfarin', dosage: 'Tablet', strength: '5mg', tier: 1, tierLabel: 'Generic (Coumadin)', copay: 5.00, requiresPriorAuth: false, alternatives: [] },
       { ndcCode: '0010-02', drugName: 'Eliquis', dosage: 'Tablet', strength: '5mg', tier: 2, tierLabel: 'Preferred Brand', copay: 45.00, requiresPriorAuth: true, alternatives: [] },
       { ndcCode: '0010-03', drugName: 'Xarelto', dosage: 'Tablet', strength: '20mg', tier: 2, tierLabel: 'Preferred Brand', copay: 45.00, requiresPriorAuth: true, alternatives: [] },

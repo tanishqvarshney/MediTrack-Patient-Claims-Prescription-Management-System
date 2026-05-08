@@ -28,8 +28,8 @@ const INITIAL_PROVIDERS: Provider[] = [
   { providerId: 'pr3', name: 'Dr. Clara Oswald', email: 'clara@medical.io', npi: '5556667777', licenseNumber: 'LIC-55443', specialty: 'Neurology', contactNumber: '555-9003', isActive: true, role: 'Provider' }
 ];
 
-const PATIENTS_STORAGE_KEY = 'tancura_patients_store';
-const PROVIDERS_STORAGE_KEY = 'tancura_providers_store';
+const PATIENTS_STORAGE_KEY = 'tancura_v1_patients_store';
+const PROVIDERS_STORAGE_KEY = 'tancura_v1_providers_store';
 
 @Injectable({ providedIn: 'root' })
 export class DirectoryService {
@@ -39,27 +39,47 @@ export class DirectoryService {
   private mockProviders: Provider[] = this.loadProvidersFromStorage();
 
   private loadPatientsFromStorage(): Patient[] {
-    const saved = localStorage.getItem(PATIENTS_STORAGE_KEY);
-    if (saved) {
-      try { return JSON.parse(saved); } catch { return INITIAL_PATIENTS; }
+    if (typeof window === 'undefined') return [...INITIAL_PATIENTS];
+    try {
+      const saved = localStorage.getItem(PATIENTS_STORAGE_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.warn('DirectoryService: Failed to load patients from storage', e);
     }
-    return INITIAL_PATIENTS;
+    return [...INITIAL_PATIENTS];
   }
 
   private savePatientsToStorage() {
-    localStorage.setItem(PATIENTS_STORAGE_KEY, JSON.stringify(this.mockPatients));
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(PATIENTS_STORAGE_KEY, JSON.stringify(this.mockPatients));
+    } catch (e) {
+      console.error('DirectoryService: Failed to save patients to storage', e);
+    }
   }
 
   private loadProvidersFromStorage(): Provider[] {
-    const saved = localStorage.getItem(PROVIDERS_STORAGE_KEY);
-    if (saved) {
-      try { return JSON.parse(saved); } catch { return INITIAL_PROVIDERS; }
+    if (typeof window === 'undefined') return [...INITIAL_PROVIDERS];
+    try {
+      const saved = localStorage.getItem(PROVIDERS_STORAGE_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.warn('DirectoryService: Failed to load providers from storage', e);
     }
-    return INITIAL_PROVIDERS;
+    return [...INITIAL_PROVIDERS];
   }
 
   private saveProvidersToStorage() {
-    localStorage.setItem(PROVIDERS_STORAGE_KEY, JSON.stringify(this.mockProviders));
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(PROVIDERS_STORAGE_KEY, JSON.stringify(this.mockProviders));
+    } catch (e) {
+      console.error('DirectoryService: Failed to save providers to storage', e);
+    }
   }
 
   getPatients(): Observable<Patient[]> {
@@ -72,7 +92,7 @@ export class DirectoryService {
       patientId: 'p' + Math.floor(Math.random() * 1000000), 
       isActive: true 
     } as Patient;
-    this.mockPatients.unshift(newPatient);
+    this.mockPatients = [newPatient, ...this.mockPatients];
     this.savePatientsToStorage();
     return of(newPatient).pipe(delay(500));
   }
@@ -106,7 +126,7 @@ export class DirectoryService {
       providerId: 'pr' + Math.floor(Math.random() * 1000000), 
       isActive: true 
     } as Provider;
-    this.mockProviders.unshift(newProvider);
+    this.mockProviders = [newProvider, ...this.mockProviders];
     this.saveProvidersToStorage();
     return of(newProvider).pipe(delay(500));
   }

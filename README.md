@@ -30,6 +30,24 @@ Intelligence-assisted claim orchestration interface designed for clinical accura
 Real-time orchestration of clinical facilities and specialists with integrated credentialing and status monitoring.
 ![TanCura Provider Network](assets/screenshots/providers.png)
 
+### 6. Comprehensive Patient Directory
+Unified workspace for member record management featuring insurance plan tracking and clinical profile orchestration.
+![TanCura Patient Directory](assets/screenshots/patients.png)
+
+### 7. Intelligent Global Search
+High-performance clinical search engine providing sub-second retrieval across claims, patients, and provider networks.
+![TanCura Search Results](assets/screenshots/search_results.png)
+
+### 8. Surgical Clinical Modals
+Advanced, task-oriented interfaces for member enrollment, provider registration, and credential updates.
+````carousel
+![New Member Enrollment](assets/screenshots/add_patient_modal.png)
+<!-- slide -->
+![New Provider Registration](assets/screenshots/add_provider_modal.png)
+<!-- slide -->
+![Update Facility Credentials](assets/screenshots/update_provider_modal.png)
+````
+
 ---
 
 ## 🚀 Key Intelligence Modules

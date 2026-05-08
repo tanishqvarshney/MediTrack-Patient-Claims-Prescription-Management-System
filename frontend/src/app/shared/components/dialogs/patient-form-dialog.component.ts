@@ -36,6 +36,7 @@ import { Patient } from '../../../shared/models/models';
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-content">
         <div class="form-grid">
+          <!-- Personal Info -->
           <mat-form-field appearance="outline">
             <mat-label>First Name</mat-label>
             <input matInput formControlName="firstName" placeholder="e.g. John">
@@ -88,6 +89,31 @@ import { Patient } from '../../../shared/models/models';
             <mat-label>Emergency Contact</mat-label>
             <input matInput formControlName="emergencyContact" placeholder="Name & Phone">
           </mat-form-field>
+
+          <!-- Insurance Info -->
+          <div class="full-width section-title">Insurance Information</div>
+
+          <div class="full-width insurance-grid" formGroupName="insurancePlan">
+            <mat-form-field appearance="outline">
+              <mat-label>Insurance Plan Name</mat-label>
+              <input matInput formControlName="planName" placeholder="e.g. Gold PPO Plus">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Payer ID</mat-label>
+              <input matInput formControlName="payerId" placeholder="e.g. PAY-9981">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Deductible Amount ($)</mat-label>
+              <input matInput type="number" formControlName="deductibleAmt" placeholder="0.00">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>OOP Max Amount ($)</mat-label>
+              <input matInput type="number" formControlName="oopMaxAmt" placeholder="0.00">
+            </mat-form-field>
+          </div>
         </div>
 
         <div class="dialog-actions">
@@ -118,6 +144,11 @@ import { Patient } from '../../../shared/models/models';
     .dialog-content { padding: 32px; }
     .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .full-width { grid-column: span 2; }
+    .section-title { 
+      font-size: 11px; font-weight: 800; color: var(--primary); 
+      text-transform: uppercase; letter-spacing: 1.5px; margin: 16px 0 8px;
+    }
+    .insurance-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 
     .dialog-actions { 
       margin-top: 32px; padding-top: 24px; border-top: 1px solid #f1f5f9;
@@ -140,7 +171,13 @@ export class PatientFormDialogComponent {
     contactNumber: [this.data?.contactNumber || ''],
     address: [this.data?.address || ''],
     memberId: [this.data?.memberId || '', Validators.required],
-    emergencyContact: [this.data?.emergencyContact || '']
+    emergencyContact: [this.data?.emergencyContact || ''],
+    insurancePlan: this.fb.group({
+      planName: [this.data?.insurancePlan?.planName || ''],
+      payerId: [this.data?.insurancePlan?.payerId || ''],
+      deductibleAmt: [this.data?.insurancePlan?.deductibleAmt || 0],
+      oopMaxAmt: [this.data?.insurancePlan?.oopMaxAmt || 0]
+    })
   });
 
   onCancel() { this.dialogRef.close(); }

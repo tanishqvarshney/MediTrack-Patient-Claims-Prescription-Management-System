@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { of, delay, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Patient, Provider } from '../../shared/models/models';
+import { AuditService } from './audit.service';
 
 const INITIAL_PATIENTS: Patient[] = [
   { 
@@ -34,6 +35,7 @@ const PROVIDERS_STORAGE_KEY = 'tancura_v1_providers_store';
 @Injectable({ providedIn: 'root' })
 export class DirectoryService {
   private http = inject(HttpClient);
+  private auditService = inject(AuditService);
 
   private mockPatients: Patient[] = this.loadPatientsFromStorage();
   private mockProviders: Provider[] = this.loadProvidersFromStorage();
@@ -94,6 +96,7 @@ export class DirectoryService {
     } as Patient;
     this.mockPatients = [newPatient, ...this.mockPatients];
     this.savePatientsToStorage();
+    this.auditService.log('Added', 'Patient', newPatient.patientId);
     return of(newPatient).pipe(delay(500));
   }
 
@@ -102,6 +105,7 @@ export class DirectoryService {
     if (idx !== -1) {
       this.mockPatients[idx] = { ...this.mockPatients[idx], ...patient };
       this.savePatientsToStorage();
+      this.auditService.log('Modified', 'Patient', id);
       return of(this.mockPatients[idx]).pipe(delay(500));
     }
     return of(patient as Patient);
@@ -112,6 +116,7 @@ export class DirectoryService {
     if (idx !== -1) {
       this.mockPatients[idx].isActive = false;
       this.savePatientsToStorage();
+      this.auditService.log('Deleted', 'Patient', id);
     }
     return of(undefined).pipe(delay(300));
   }
@@ -128,6 +133,7 @@ export class DirectoryService {
     } as Provider;
     this.mockProviders = [newProvider, ...this.mockProviders];
     this.saveProvidersToStorage();
+    this.auditService.log('Added', 'Provider', newProvider.providerId);
     return of(newProvider).pipe(delay(500));
   }
 
@@ -136,6 +142,7 @@ export class DirectoryService {
     if (idx !== -1) {
       this.mockProviders[idx] = { ...this.mockProviders[idx], ...provider };
       this.saveProvidersToStorage();
+      this.auditService.log('Modified', 'Provider', id);
       return of(this.mockProviders[idx]).pipe(delay(500));
     }
     return of(provider as Provider);

@@ -6,6 +6,7 @@ import {
   ClaimDetail, ClaimMetrics, ClaimStatus, ClaimSummary, FormularyResult,
   PagedResult, SubmitClaimRequest, SubmitClaimResponse
 } from '../../shared/models/models';
+import { AuditService } from './audit.service';
 import { environment } from '../../../environments/environment';
 
 // Shared State Orchestration
@@ -47,6 +48,7 @@ function saveToStorage(claims: ClaimSummary[]) {
 @Injectable({ providedIn: 'root' })
 export class ClaimsService {
   private http = inject(HttpClient);
+  private auditService = inject(AuditService);
   private base = `${environment.apiUrl}/claims`;
 
   // Use persistent storage
@@ -86,6 +88,7 @@ export class ClaimsService {
 
     this.mockClaims = [newClaim, ...this.mockClaims];
     saveToStorage(this.mockClaims);
+    this.auditService.log('Added', 'Claim', claimId);
     
     return of(response).pipe(delay(1000));
   }
@@ -177,11 +180,13 @@ export class ClaimsService {
   updateClaimStatus(claimId: string, status: ClaimStatus, rejectionReason?: string) {
     const idx = this.mockClaims.findIndex(c => c.claimId === claimId);
     if (idx !== -1) {
-      this.mockClaims[idx] = { ...this.mockClaims[idx], status: status as ClaimStatus };
-      if (rejectionReason) (this.mockClaims[idx] as any).rejectionReason = rejectionReason;
+      const claim = this.mockClaims[idx];
+      this.mockClaims[idx] = { ...claim, status };
       saveToStorage(this.mockClaims);
+      this.auditService.log('Modified', 'Claim', claimId);
+      return of(void 0).pipe(delay(400));
     }
-    return of({ success: true }).pipe(delay(800));
+    return of({ success: false }).pipe(delay(400));
   }
 }
 
@@ -262,6 +267,7 @@ export class PharmacyService {
 export class AdminService {
   private http = inject(HttpClient);
   private claimsService = inject(ClaimsService);
+  private auditService = inject(AuditService);
   private base = `${environment.apiUrl}/admin`;
 
   getMetrics(from?: string, to?: string) {
@@ -294,20 +300,22 @@ export class AdminService {
   }
 
   getAuditLogs(params: { page: number, pageSize: number, entityType?: string }): Observable<PagedResult<AuditLog>> {
-    const mockLogs: AuditLog[] = [
-      { logId: 1, timestamp: new Date().toISOString(), userId: 'usr-admin', userRole: 'Admin', action: 'Modified', targetEntity: 'Claim', entityId: 'CLM-101', ipAddress: '192.168.1.1', status: 'Success' },
-      { logId: 2, timestamp: new Date(Date.now() - 3600000).toISOString(), userId: 'usr-admin', userRole: 'Admin', action: 'Added', targetEntity: 'Patient', entityId: 'PAT-202', ipAddress: '192.168.1.1', status: 'Success' },
-      { logId: 3, timestamp: new Date(Date.now() - 7200000).toISOString(), userId: 'usr-prov-1', userRole: 'Provider', action: 'Added', targetEntity: 'Prescription', entityId: 'RX-303', ipAddress: '192.168.1.5', status: 'Success' },
-      { logId: 4, timestamp: new Date(Date.now() - 10800000).toISOString(), userId: 'usr-admin', userRole: 'Admin', action: 'Approved', targetEntity: 'Claim', entityId: 'CLM-105', ipAddress: '192.168.1.1', status: 'Success' },
-    ];
-    
-    let filtered = params.entityType ? mockLogs.filter(l => l.targetEntity === params.entityType) : mockLogs;
-    return of({ 
-      items: filtered, 
+    const allLogs = this.auditService.getAuditLogs();
+    const filtered = params.entityType 
+      ? allLogs.filter(l => l.targetEntity === params.entityType)
+      : allLogs;
+
+    const start = (params.page - 1) * params.pageSize;
+    const pagedLogs = filtered.slice(start, start + params.pageSize);
+
+    const result: PagedResult<AuditLog> = {
+      items: pagedLogs,
       total: filtered.length,
       page: params.page,
       pageSize: params.pageSize
-    }).pipe(delay(800));
+    };
+    
+    return of(result).pipe(delay(500));
   }
 
   logAction(log: Partial<AuditLog>): Observable<void> {

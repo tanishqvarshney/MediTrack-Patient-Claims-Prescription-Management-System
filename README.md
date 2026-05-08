@@ -8,6 +8,12 @@
 
 ---
 
+## 🎥 Platform Walkthrough
+Experience the full cinematic orchestration of the TanCura platform in action:
+[![TanCura Platform Walkthrough](https://img.shields.io/badge/YouTube-Video%20Walkthrough-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=O21aBlcPXGE)
+
+---
+
 ## 🖼️ Visual Walkthrough
 
 ### 1. Cinematic Intelligence Portal

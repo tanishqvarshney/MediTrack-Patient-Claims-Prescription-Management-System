@@ -48,6 +48,14 @@ Advanced, task-oriented interfaces for member enrollment, provider registration,
 ![Update Facility Credentials](assets/screenshots/update_provider_modal.png)
 ````
 
+### 9. Pharmaceutical Benefit Verification
+Real-time drug formulary search engine with integrated Tier-status tracking and prior authorization telemetry.
+![TanCura Pharmacy](assets/screenshots/pharmacy.png)
+
+### 10. System Governance & Orchestration
+Unified administrative control center for platform branding, security compliance, and clinical data lifecycle management.
+![TanCura Settings](assets/screenshots/settings.png)
+
 ---
 
 ## 🚀 Key Intelligence Modules

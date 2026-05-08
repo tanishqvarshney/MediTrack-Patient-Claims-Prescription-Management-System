@@ -10,14 +10,14 @@ import { environment } from '../../../environments/environment';
 
 // Shared State Orchestration
 const INITIAL_MOCK_CLAIMS: ClaimSummary[] = [
-  { claimId: 'c1', claimNumber: 'CLN-2023-001', patientName: 'John Doe', serviceDate: '2023-10-15', totalAmount: 450.00, status: 'Approved' },
-  { claimId: 'c2', claimNumber: 'CLN-2023-002', patientName: 'Jane Smith', serviceDate: '2023-10-18', totalAmount: 1200.50, status: 'Pending' },
-  { claimId: 'c3', claimNumber: 'CLN-2023-003', patientName: 'Robert Brown', serviceDate: '2023-10-20', totalAmount: 320.00, status: 'Rejected' },
-  { claimId: 'c4', claimNumber: 'CLN-2023-004', patientName: 'Emily Davis', serviceDate: '2023-10-22', totalAmount: 890.00, status: 'Paid' },
-  { claimId: 'c5', claimNumber: 'CLN-2023-005', patientName: 'Michael Wilson', serviceDate: '2023-10-25', totalAmount: 150.75, status: 'Processing' },
-  { claimId: 'c6', claimNumber: 'CLN-2023-006', patientName: 'Sarah Miller', serviceDate: '2023-10-26', totalAmount: 2100.00, status: 'Pending' },
-  { claimId: 'c7', claimNumber: 'CLN-2023-007', patientName: 'James Taylor', serviceDate: '2023-10-27', totalAmount: 55.00, status: 'Approved' },
-  { claimId: 'c8', claimNumber: 'CLN-2023-008', patientName: 'Linda Anderson', serviceDate: '2023-10-28', totalAmount: 730.00, status: 'Paid' }
+  { claimId: 'c1', claimNumber: 'CLN-2023-001', patientName: 'John Doe', providerName: 'Northwest Medical Group', serviceDate: '2023-10-15', totalAmount: 450.00, status: 'Approved' },
+  { claimId: 'c2', claimNumber: 'CLN-2023-002', patientName: 'Jane Smith', providerName: 'City General Hospital', serviceDate: '2023-10-18', totalAmount: 1200.50, status: 'Pending' },
+  { claimId: 'c3', claimNumber: 'CLN-2023-003', patientName: 'Robert Brown', providerName: 'Valley Health Center', serviceDate: '2023-10-20', totalAmount: 320.00, status: 'Rejected' },
+  { claimId: 'c4', claimNumber: 'CLN-2023-004', patientName: 'Emily Davis', providerName: 'Northwest Medical Group', serviceDate: '2023-10-22', totalAmount: 890.00, status: 'Paid' },
+  { claimId: 'c5', claimNumber: 'CLN-2023-005', patientName: 'Michael Wilson', providerName: 'Lakeside Clinic', serviceDate: '2023-10-25', totalAmount: 150.75, status: 'Processing' },
+  { claimId: 'c6', claimNumber: 'CLN-2023-006', patientName: 'Sarah Miller', providerName: 'City General Hospital', serviceDate: '2023-10-26', totalAmount: 2100.00, status: 'Pending' },
+  { claimId: 'c7', claimNumber: 'CLN-2023-007', patientName: 'James Taylor', providerName: 'Valley Health Center', serviceDate: '2023-10-27', totalAmount: 55.00, status: 'Approved' },
+  { claimId: 'c8', claimNumber: 'CLN-2023-008', patientName: 'Linda Anderson', providerName: 'Northwest Medical Group', serviceDate: '2023-10-28', totalAmount: 730.00, status: 'Paid' }
 ];
 
 const STORAGE_KEY = 'tancura_v1_claims_store';
@@ -61,9 +61,14 @@ export class ClaimsService {
       claimId,
       claimNumber,
       patientName: request.patientName, 
+      providerName: request.providerName,
       serviceDate: request.serviceDate,
       totalAmount: request.totalAmount,
-      status: 'Pending'
+      status: 'Pending',
+      lineItems: request.lineItems.map(item => ({
+        ...item,
+        lineTotal: item.quantity * item.unitCost
+      }))
     };
 
     const response: SubmitClaimResponse = {
@@ -90,9 +95,9 @@ export class ClaimsService {
     if (claim) {
       const detail: ClaimDetail = {
         ...claim,
-        providerName: 'Northwest Medical Group',
+        providerName: claim.providerName || 'Northwest Medical Group',
         submittedDate: new Date().toISOString(),
-        lineItems: [
+        lineItems: claim.lineItems || [
           { procedureCode: '99213', quantity: 1, unitCost: 150.00, lineTotal: 150.00 },
           { procedureCode: '85025', quantity: 1, unitCost: 300.00, lineTotal: 300.00 }
         ]

@@ -3,9 +3,11 @@ export interface ClaimSummary {
   claimId: string;
   claimNumber: string;
   patientName: string;
+  providerName?: string;
   serviceDate: string;
   totalAmount: number;
   status: ClaimStatus;
+  lineItems?: LineItem[];
 }
 
 export interface ClaimDetail extends ClaimSummary {

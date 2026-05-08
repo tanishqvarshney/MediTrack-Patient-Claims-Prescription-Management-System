@@ -266,9 +266,22 @@ export class SubmitClaimComponent {
     providerId: ['', Validators.required],
     providerName: ['', Validators.required],
     serviceDate: [null as Date | null, Validators.required],
-    totalAmount: [null as number | null, [Validators.required, Validators.min(0.01)]],
+    totalAmount: [{ value: 0, disabled: true }, [Validators.required, Validators.min(0.01)]],
     lineItems: this.fb.array([this.buildLineItem()])
   });
+
+  constructor() {
+    this.lineItems.valueChanges.subscribe(() => this.calculateTotal());
+  }
+
+  calculateTotal() {
+    const total = this.lineItems.controls.reduce((acc, control) => {
+      const qty = control.get('quantity')?.value || 0;
+      const cost = control.get('unitCost')?.value || 0;
+      return acc + (qty * cost);
+    }, 0);
+    this.form.get('totalAmount')?.setValue(total);
+  }
 
   get lineItems() { return this.form.get('lineItems') as FormArray; }
 
@@ -289,7 +302,7 @@ export class SubmitClaimComponent {
     this.submitting.set(true);
     this.error.set(null);
 
-    const val = this.form.value;
+    const val = this.form.getRawValue(); // use getRawValue to get disabled totalAmount
     this.claimsService.submitClaim({
       patientId: val.patientId!,
       patientName: val.patientName!,

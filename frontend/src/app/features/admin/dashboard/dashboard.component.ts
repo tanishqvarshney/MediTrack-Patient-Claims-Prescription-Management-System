@@ -63,7 +63,9 @@ import { ClaimMetrics } from '../../../shared/models/models';
           <div class="chart-container">
             <div class="c-header">
               <h3>Claims Performance (30 Days)</h3>
-              <button mat-icon-button [matMenuTriggerFor]="chartMenu">
+              <button mat-icon-button [matMenuTriggerFor]="chartMenu" 
+                      matTooltip="Chart Options"
+                      (menuOpened)="onMenuOpen()">
                 <mat-icon>more_vert</mat-icon>
               </button>
 
@@ -307,5 +309,9 @@ export class DashboardComponent implements OnInit {
     a.click();
     window.URL.revokeObjectURL(url);
     this.snackBar.open('Claims performance ledger exported', 'CSV', { duration: 3000 });
+  }
+
+  onMenuOpen() {
+    console.log('DashboardComponent: Performance menu opened');
   }
 }

@@ -74,8 +74,8 @@ interface NavItem {
               <span class="toolbar-spacer"></span>
 
               <div class="user-actions">
-                <button mat-icon-button class="icon-btn">
-                  <mat-icon>notifications_none</mat-icon>
+                <button mat-icon-button class="icon-btn" [matMenuTriggerFor]="notificationsMenu">
+                  <mat-icon [class.has-notifications]="true">notifications_none</mat-icon>
                 </button>
                 <button mat-icon-button class="icon-btn" routerLink="/settings">
                   <mat-icon>settings</mat-icon>
@@ -90,6 +90,39 @@ interface NavItem {
                   }
                 </button>
               </div>
+
+              <mat-menu #notificationsMenu="matMenu" class="premium-menu notification-menu">
+                <div class="menu-header" mat-menu-item disabled>
+                  <mat-icon>notifications_active</mat-icon>
+                  <span>Clinical Alerts</span>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="notification-item" mat-menu-item>
+                  <div class="notif-icon approved"><mat-icon>check_circle</mat-icon></div>
+                  <div class="notif-text">
+                    <span class="notif-title">Claim CLN-2023-002 Approved</span>
+                    <span class="notif-time">2 minutes ago</span>
+                  </div>
+                </div>
+                <div class="notification-item" mat-menu-item>
+                  <div class="notif-icon warning"><mat-icon>warning</mat-icon></div>
+                  <div class="notif-text">
+                    <span class="notif-title">Security Audit Log Generated</span>
+                    <span class="notif-time">15 minutes ago</span>
+                  </div>
+                </div>
+                <div class="notification-item" mat-menu-item>
+                  <div class="notif-icon pending"><mat-icon>hourglass_empty</mat-icon></div>
+                  <div class="notif-text">
+                    <span class="notif-title">New Patient Enrollment Pending</span>
+                    <span class="notif-time">1 hour ago</span>
+                  </div>
+                </div>
+                <mat-divider></mat-divider>
+                <button mat-menu-item class="see-all-btn">
+                  <span>View All Telemetry</span>
+                </button>
+              </mat-menu>
 
               <mat-menu #userMenu="matMenu" class="premium-menu">
                 <div class="menu-header" mat-menu-item disabled>
@@ -191,6 +224,27 @@ interface NavItem {
     }
 
     .content-area { padding: 32px; padding-top: 0; flex: 1; }
+
+    .notification-menu { width: 320px; }
+    .notification-item { display: flex; align-items: center; gap: 16px; padding: 12px 16px !important; height: auto !important; }
+    .notif-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .notif-icon mat-icon { font-size: 20px; width: 20px; height: 20px; margin: 0 !important; }
+    .notif-icon.approved { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .notif-icon.warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .notif-icon.pending { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    
+    .notif-text { display: flex; flex-direction: column; gap: 2px; }
+    .notif-title { font-size: 13px; font-weight: 700; color: var(--text-main); white-space: normal; line-height: 1.4; }
+    .notif-time { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    
+    .see-all-btn { text-align: center; color: var(--primary) !important; font-weight: 700 !important; font-size: 12px; }
+    
+    .has-notifications { position: relative; }
+    .has-notifications::after {
+      content: ''; position: absolute; top: 2px; right: 2px;
+      width: 8px; height: 8px; background: var(--error);
+      border-radius: 50%; border: 2px solid var(--bg-main);
+    }
   `]
 })
 export class AppComponent {

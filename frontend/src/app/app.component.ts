@@ -77,7 +77,7 @@ interface NavItem {
                 <button mat-icon-button class="icon-btn">
                   <mat-icon>notifications_none</mat-icon>
                 </button>
-                <button mat-icon-button class="icon-btn">
+                <button mat-icon-button class="icon-btn" routerLink="/settings">
                   <mat-icon>settings</mat-icon>
                 </button>
                 

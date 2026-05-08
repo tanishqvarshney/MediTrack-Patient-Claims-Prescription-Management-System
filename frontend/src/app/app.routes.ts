@@ -22,6 +22,12 @@ export const routes: Routes = [
       import('./features/pharmacy/pharmacy.routes').then(m => m.PHARMACY_ROUTES)
   },
   {
+    path: 'settings',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/settings/settings.component').then(m => m.SettingsComponent)
+  },
+  {
     path: 'admin',
     canActivate: [authGuard, roleGuard('Admin')],
     loadChildren: () =>

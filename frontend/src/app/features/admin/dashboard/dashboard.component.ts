@@ -18,7 +18,8 @@ import { ClaimMetrics } from '../../../shared/models/models';
   standalone: true,
   imports: [
     CommonModule, MatCardModule, MatIconModule, MatButtonModule,
-    MatProgressBarModule, MatMenuModule, MatSnackBarModule, MatTooltipModule, BaseChartDirective
+    MatProgressBarModule, MatMenuModule, MatSnackBarModule, MatTooltipModule,
+    MatDividerModule, BaseChartDirective
   ],
   template: `
     <div class="dashboard-container fade-in">
@@ -60,7 +61,6 @@ import { ClaimMetrics } from '../../../shared/models/models';
 
       <div class="main-grid">
         <div class="left-col">
-          <!-- Claims Volume Chart -->
           <div class="chart-container">
             <div class="c-header">
               <h3>Claims Performance (30 Days)</h3>
@@ -70,7 +70,6 @@ import { ClaimMetrics } from '../../../shared/models/models';
                       (menuOpened)="onMenuOpen()">
                 <mat-icon>more_vert</mat-icon>
               </button>
-
             </div>
             
             <mat-menu #chartMenu="matMenu" class="premium-menu">
@@ -88,7 +87,7 @@ import { ClaimMetrics } from '../../../shared/models/models';
                 <span>Refresh Telemetry</span>
               </button>
             </mat-menu>
-            </div>
+
             <div class="chart-wrapper">
               <canvas baseChart
                 [data]="lineChartData"

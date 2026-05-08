@@ -12,11 +12,23 @@
 
 ### 1. Cinematic Intelligence Portal
 A secure, high-fidelity entry point featuring **frosted glassmorphism**, animated medical HUD overlays, and precision tactile interactions.
-![TanCura Login](assets/walkthrough/login.png)
+![TanCura Login](assets/screenshots/login.png)
 
 ### 2. Strategic Intelligence Dashboard
 The core hub for medical orchestration. Features real-time KPI monitoring, claims velocity tracking, and glass-accented clinical data visualization.
-![TanCura Dashboard](assets/walkthrough/dashboard.png)
+![TanCura Dashboard](assets/screenshots/dashboard.png)
+
+### 3. Clinical Ledger & Adjudication
+Unified workspace for orchestrating complex clinical records with high-performance filtering and real-time status telemetry.
+![TanCura Ledger](assets/screenshots/ledger.png)
+
+### 4. Assisted Claims Submission
+Intelligence-assisted claim orchestration interface designed for clinical accuracy and provider network efficiency.
+![TanCura Submit Claim](assets/screenshots/submit_claim.png)
+
+### 5. Provider Network Orchestration
+Real-time orchestration of clinical facilities and specialists with integrated credentialing and status monitoring.
+![TanCura Provider Network](assets/screenshots/providers.png)
 
 ---
 

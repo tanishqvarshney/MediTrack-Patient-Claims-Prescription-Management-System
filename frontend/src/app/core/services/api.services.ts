@@ -32,16 +32,16 @@ const INITIAL_MOCK_CLAIMS: ClaimSummary[] = [
   { claimId: 'c19', claimNumber: 'CLN-2023-019', patientName: 'Patricia Martin', providerName: 'Valley Health Center', serviceDate: '2023-11-09', totalAmount: 340.00, status: 'Paid' },
   { claimId: 'c20', claimNumber: 'CLN-2023-020', patientName: 'Joseph Thompson', providerName: 'Northwest Medical Group', serviceDate: '2023-11-10', totalAmount: 760.00, status: 'Approved' },
   { claimId: 'c21', claimNumber: 'CLN-2023-021', patientName: 'Jennifer Moore', providerName: 'Lakeside Clinic', serviceDate: '2023-11-11', totalAmount: 230.00, status: 'Pending' },
-  { claimId: 'c22', claimNumber: 'CLN-2023-022', patientName: 'William Young', providerName: 'City General Hospital', serviceDate: '2023-11-12', totalAmount: 1100.00, status: 'Approved' },
+  { claimId: 'c22', claimNumber: 'CLN-2023-022', patientName: 'William Young', providerName: 'City General Hospital', serviceDate: '2023-11-12', totalAmount: 1100.00, status: 'Rejected' },
   { claimId: 'c23', claimNumber: 'CLN-2023-023', patientName: 'Elizabeth Allen', providerName: 'Valley Health Center', serviceDate: '2023-11-13', totalAmount: 550.00, status: 'Paid' },
-  { claimId: 'c24', claimNumber: 'CLN-2023-024', patientName: 'Thomas King', providerName: 'Northwest Medical Group', serviceDate: '2023-11-14', totalAmount: 1200.00, status: 'Processing' },
+  { claimId: 'c24', claimNumber: 'CLN-2023-024', patientName: 'Thomas King', providerName: 'Northwest Medical Group', serviceDate: '2023-11-14', totalAmount: 1200.00, status: 'Rejected' },
   { claimId: 'c25', claimNumber: 'CLN-2023-025', patientName: 'Susan Wright', providerName: 'Lakeside Clinic', serviceDate: '2023-11-15', totalAmount: 310.00, status: 'Approved' },
-  { claimId: 'c26', claimNumber: 'CLN-2023-026', patientName: 'Charles Lopez', providerName: 'City General Hospital', serviceDate: '2023-11-16', totalAmount: 2800.00, status: 'Pending' },
+  { claimId: 'c26', claimNumber: 'CLN-2023-026', patientName: 'Charles Lopez', providerName: 'City General Hospital', serviceDate: '2023-11-16', totalAmount: 2800.00, status: 'Rejected' },
   { claimId: 'c27', claimNumber: 'CLN-2023-027', patientName: 'Margaret Hill', providerName: 'Valley Health Center', serviceDate: '2023-11-17', totalAmount: 45.00, status: 'Paid' },
   { claimId: 'c28', claimNumber: 'CLN-2023-028', patientName: 'Steven Scott', providerName: 'Northwest Medical Group', serviceDate: '2023-11-18', totalAmount: 890.00, status: 'Approved' }
 ];
 
-const STORAGE_KEY = 'tancura_v2_claims_store';
+const STORAGE_KEY = 'tancura_v3_claims_store';
 
 function loadFromStorage(): ClaimSummary[] {
   if (typeof window === 'undefined') return [...INITIAL_MOCK_CLAIMS];
@@ -51,7 +51,7 @@ function loadFromStorage(): ClaimSummary[] {
       return JSON.parse(saved);
     }
   } catch (e) {
-    console.warn('ClaimsService: Failed to load from storage', e);
+    console.warn('ClaimsService: Failed to load claims from storage', e);
   }
   return [...INITIAL_MOCK_CLAIMS];
 }

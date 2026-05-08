@@ -178,8 +178,8 @@ import { AdminService } from '../../../core/services/api.services';
       padding: 24px; border: 1px solid rgba(255,255,255,0.4); backdrop-filter: blur(20px);
     }
     .filter-item { display: flex; flex-direction: column; gap: 8px; }
-    .filter-item label { color: var(--text-on-light-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-    .filter-item mat-form-field { width: 100%; margin-bottom: -1.25em; }
+    .filter-item label { color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+    .filter-item mat-form-field { width: 100%; }
 
     /* Table Wrapper */
     .table-wrapper { 
@@ -196,18 +196,18 @@ import { AdminService } from '../../../core/services/api.services';
     .mat-mdc-header-cell {
       padding: 16px 24px !important;
       background: rgba(15, 23, 42, 0.02) !important;
-      color: var(--text-on-light-muted) !important;
+      color: var(--text-muted) !important;
       font-size: 11px !important;
       font-weight: 700 !important;
       text-transform: uppercase !important;
       letter-spacing: 0.8px !important;
-      border-bottom: 1px solid rgba(15, 23, 42, 0.05) !important;
+      border-bottom: 1px solid var(--border) !important;
     }
 
     .mat-mdc-cell { 
       padding: 16px 24px !important; 
-      border-bottom: 1px solid rgba(15, 23, 42, 0.03) !important; 
-      color: var(--text-on-light) !important; 
+      border-bottom: 1px solid var(--border) !important; 
+      color: var(--text-main) !important; 
       font-size: 13px;
     }
 

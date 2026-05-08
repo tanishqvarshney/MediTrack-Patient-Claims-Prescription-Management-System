@@ -285,6 +285,16 @@ export class DashboardComponent implements OnInit {
   refreshData() {
     this.claimsService.getStats().subscribe(m => {
       this.metrics.set(m);
+      
+      // Sync Chart Data with Telemetry
+      if (m.dailyBreakdown && m.dailyBreakdown.length > 0) {
+        this.lineChartData.labels = m.dailyBreakdown.map(d => d.date);
+        this.lineChartData.datasets[0].data = m.dailyBreakdown.map(d => d.approved);
+        this.lineChartData.datasets[1].data = m.dailyBreakdown.map(d => d.rejected);
+        // Force refresh
+        this.lineChartData = { ...this.lineChartData };
+      }
+
       this.snackBar.open('Dashboard telemetry synchronized', 'Success', { duration: 2000 });
     });
   }

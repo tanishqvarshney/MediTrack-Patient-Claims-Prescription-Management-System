@@ -78,6 +78,10 @@ import { AuthService } from '../../../core/auth/auth.service';
           <p>Admin: <strong>admin&#64;tancura.io</strong></p>
           <p>Password: <strong>TanCura123!</strong></p>
         </div>
+
+        <div class="creator-footer">
+          Designed & Developed by <strong>Tanishq Varshney</strong>
+        </div>
       </div>
     </div>
   `,
@@ -173,6 +177,13 @@ import { AuthService } from '../../../core/auth/auth.service';
     .demo-creds h4 { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px 0; }
     .demo-creds p { font-size: 13px; color: var(--text-muted); margin: 4px 0; font-weight: 600; }
     .demo-creds strong { color: var(--text-main); }
+
+    .creator-footer {
+      margin-top: 32px; text-align: center;
+      font-size: 11px; color: var(--text-muted); font-weight: 600;
+      opacity: 0.8;
+    }
+    .creator-footer strong { color: var(--text-main); }
   `]
 })
 export class LoginComponent {

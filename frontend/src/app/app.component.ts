@@ -55,6 +55,10 @@ interface NavItem {
           </mat-nav-list>
 
           <div class="sidebar-footer">
+            <div class="creator-info" *ngIf="!collapsed()">
+              <span class="created-by">Developed by</span>
+              <span class="creator-name">Tanishq Varshney</span>
+            </div>
             <button mat-icon-button class="toggle-btn" (click)="collapsed.set(!collapsed())">
               <mat-icon>{{ collapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
             </button>
@@ -196,8 +200,11 @@ interface NavItem {
 
     .sidebar-footer {
       padding: 20px; border-top: 1px solid var(--border);
-      display: flex; justify-content: center;
+      display: flex; align-items: center; justify-content: space-between;
     }
+    .creator-info { display: flex; flex-direction: column; gap: 2px; }
+    .created-by { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .creator-name { font-size: 12px; font-weight: 800; color: var(--text-main); }
     .toggle-btn { background: var(--bg-main); color: var(--text-muted); }
 
     .main-content-wrapper { background: var(--bg-main); }
@@ -240,7 +247,7 @@ interface NavItem {
       font-weight: 800; font-size: 14px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
     }
 
-    .profile-menu { min-width: 200px; }
+
     .menu-header { 
       padding: 16px 20px; display: flex; align-items: center; gap: 10px;
       color: var(--text-muted); pointer-events: none;
@@ -308,3 +315,7 @@ export class AppComponent {
     return this.navItems.filter(item => item.roles.includes(role));
   });
 }
+
+/*
+© 2026 TanCura Healthcare Intelligence. Designed and Developed by Tanishq Varshney.
+*/
